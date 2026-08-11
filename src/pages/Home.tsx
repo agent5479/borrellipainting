@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { HashLink } from '../components/HashScroll'
 import { DemoCardImage } from '../components/DemoImages'
 import { GALLERY_THEMES, WINDOW_PAIRS, WINDOW_STEPS } from '../content/gallery'
 import { AREA, FACEBOOK_URL, FOUNDER, PHONE_DISPLAY, PHONE_TEL, asset } from '../content/site'
@@ -40,12 +41,12 @@ export default function Home() {
             Tākaka, Pōhara, Collingwood, and around the Bay.
           </p>
           <div className="hero-actions">
-            <a className="btn primary" href="#quote">
+            <HashLink className="btn primary" to="/#quote">
               Get a ballpark
-            </a>
-            <a className="btn ghost" href="#contact">
+            </HashLink>
+            <HashLink className="btn ghost" to="/#contact">
               Contact
-            </a>
+            </HashLink>
           </div>
         </div>
         <figure className="hero-photo">

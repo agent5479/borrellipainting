@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { HashLink } from './HashScroll'
 import type { DemoImageId } from '../shared/demoAssets'
 import { DemoImageTiles } from './DemoImages'
 
@@ -60,9 +61,9 @@ export function QuoteDoneCta() {
   return (
     <div className="demo-quote-cta">
       <p>This is a ballpark only. Luca will confirm on site.</p>
-      <Link className="btn primary" to="/#contact">
+      <HashLink className="btn primary" to="/#contact">
         Contact Luca
-      </Link>
+      </HashLink>
     </div>
   )
 }
