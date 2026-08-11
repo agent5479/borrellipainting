@@ -12,10 +12,10 @@ export function Layout() {
             <img src={asset('images/brand-logo.png')} alt="Borrelli Painting" width={220} height={88} />
           </Link>
           <nav className="site-nav" aria-label="Primary">
+            <Link to="/#quote">Quote</Link>
             <Link to="/#work">Work</Link>
             <Link to="/#windows">Windows</Link>
             <Link to="/#about">About</Link>
-            <Link to="/#quote">Quote</Link>
             <Link to="/#contact">Contact</Link>
           </nav>
         </div>

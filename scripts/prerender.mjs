@@ -29,14 +29,31 @@ for (const route of routes) {
 
 writeFileSync(join(root, 'dist/404.html'), readFileSync(join(root, 'dist/index.html'), 'utf8'))
 
+const today = new Date().toISOString().slice(0, 10)
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>${SITE}/</loc></url>
-  <url><loc>${SITE}/quote/freshcoat/</loc></url>
-  <url><loc>${SITE}/quote/paintboard/</loc></url>
+  <url>
+    <loc>${SITE}/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${SITE}/quote/freshcoat/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${SITE}/quote/paintboard/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
 `
 writeFileSync(join(root, 'dist/sitemap.xml'), sitemap)
+console.log('wrote dist/sitemap.xml')
 
 rmSync(join(root, 'dist/server'), { recursive: true, force: true })
 console.log('prerender done')

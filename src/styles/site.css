@@ -229,6 +229,15 @@ main {
   max-width: 40rem;
 }
 
+.section-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
 .services {
   background: #fff;
 }
@@ -390,7 +399,7 @@ main {
 }
 
 .quotes {
-  background: var(--paper);
+  background: #fff;
 }
 
 .quote-cards {

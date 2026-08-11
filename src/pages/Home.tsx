@@ -58,6 +58,33 @@ export default function Home() {
         </figure>
       </section>
 
+      <section id="quote" className="band quotes" aria-labelledby="quote-heading">
+        <div className="wrap">
+          <p className="section-kicker">Estimate tools</p>
+          <h2 id="quote-heading">Get a ballpark quote</h2>
+          <p className="band-lead">
+            Two interactive estimators for wall area, paint system, and a Golden Bay figure. Same
+            math, different layouts — try both; Luca confirms the real number on site.
+          </p>
+          <div className="quote-cards">
+            <Link to="/quote/freshcoat" className="quote-card quote-card-fresh">
+              <DemoCardImage id="freshcoat" />
+              <span className="quote-kind">Step-by-step</span>
+              <h3>Fresh Coat</h3>
+              <p>Wall sizes → indoor or outdoor → paint & undercoat → schedule → ballpark.</p>
+              <span className="quote-go">Open estimator →</span>
+            </Link>
+            <Link to="/quote/paintboard" className="quote-card quote-card-board">
+              <DemoCardImage id="paintboard" />
+              <span className="quote-kind">One-screen board</span>
+              <h3>Paint Board</h3>
+              <p>Pin wall cards and paint chips with a live ballpark column as you edit.</p>
+              <span className="quote-go">Open estimator →</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="band services" aria-labelledby="services-heading">
         <div className="wrap">
           <h2 id="services-heading">What Luca paints</h2>
@@ -137,32 +164,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="quote" className="band quotes" aria-labelledby="quote-heading">
-        <div className="wrap">
-          <h2 id="quote-heading">Ballpark quotes — two layouts</h2>
-          <p className="band-lead">
-            Same wall-size math, two interfaces. Try both; one will stay. Figures are a guide only —
-            Luca confirms on site.
-          </p>
-          <div className="quote-cards">
-            <Link to="/quote/freshcoat" className="quote-card quote-card-fresh">
-              <DemoCardImage id="freshcoat" />
-              <span className="quote-kind">Wizard</span>
-              <h3>Fresh Coat</h3>
-              <p>Step through wall sizes, indoor or outdoor, paint and undercoat, then a ballpark.</p>
-              <span className="quote-go">Open Fresh Coat →</span>
-            </Link>
-            <Link to="/quote/paintboard" className="quote-card quote-card-board">
-              <DemoCardImage id="paintboard" />
-              <span className="quote-kind">Wall board</span>
-              <h3>Paint Board</h3>
-              <p>Pin surfaces and paint chips on one screen with a live ballpark column.</p>
-              <span className="quote-go">Open Paint Board →</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
       <section id="about" className="band about" aria-labelledby="about-heading">
         <div className="wrap about-grid">
           <div>
@@ -173,8 +174,8 @@ export default function Home() {
               character houses that were never a simple box.
             </p>
             <p>
-              If you want a number to start with, use one of the ballpark tools. For a real quote,
-              ring or message and he will come and look.
+              If you want a number to start with, use one of the ballpark tools above. For a real
+              quote, ring or message and he will come and look.
             </p>
           </div>
           <figure className="about-photo">
