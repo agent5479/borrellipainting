@@ -38,7 +38,8 @@ export function jsonLd(): string {
     '@type': 'HousePainter',
     name: SITE_NAME,
     url: `${SITE_URL}/`,
-    image: ogImageUrl(),
+    image: [ogImageUrl(), iconUrl()],
+    logo: iconUrl(),
     founder: { '@type': 'Person', name: FOUNDER },
     areaServed: {
       '@type': 'AdministrativeArea',
@@ -54,6 +55,11 @@ export function jsonLd(): string {
 /** Absolute OG image URL (painted house). */
 export function ogImageUrl(): string {
   return `${SITE_URL}/images/gallery/exteriors/painted-house.jpg`
+}
+
+/** Square brand mark for search / social fallbacks that prefer icons. */
+export function iconUrl(): string {
+  return `${SITE_URL}/icon-192.png`
 }
 
 export function renderHead(path: string): string {
