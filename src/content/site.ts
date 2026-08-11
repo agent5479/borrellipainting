@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://agent5479.github.io/borrellipainting'
+export const SITE_URL = 'https://borrellipainting.nz'
 export const SITE_NAME = 'Borrelli Painting'
 export const FOUNDER = 'Gianluca Borrelli'
 export const PHONE_DISPLAY = '022 086 1842'

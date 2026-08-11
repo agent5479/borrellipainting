@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://agent5479.github.io/borrellipainting/sitemap.xml
+Sitemap: https://borrellipainting.nz/sitemap.xml

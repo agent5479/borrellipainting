@@ -7,7 +7,7 @@ const template = readFileSync(join(root, 'dist/index.html'), 'utf8')
 const serverEntry = join(root, 'dist/server/entry-server.js')
 const { render } = await import(pathToFileURL(serverEntry).href)
 
-const SITE = 'https://agent5479.github.io/borrellipainting'
+const SITE = 'https://borrellipainting.nz'
 
 const routes = [
   { path: '/', file: 'dist/index.html' },

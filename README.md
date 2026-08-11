@@ -2,7 +2,7 @@
 
 Marketing site for Gianluca (Luca) Borrelli — interior and exterior painting in Golden Bay.
 
-Live: [https://agent5479.github.io/borrellipainting/](https://agent5479.github.io/borrellipainting/)
+Live: [https://borrellipainting.nz](https://borrellipainting.nz)
 
 ## Develop
 
@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-The app is served at `/borrellipainting/` (same path as GitHub Pages).
+The app is served from the site root (custom domain on GitHub Pages).
 
 ```bash
 npm run build
