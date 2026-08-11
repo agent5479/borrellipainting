@@ -1,8 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { QuoteChrome, QuoteCompare, QuoteDoneCta } from '../../components/QuoteChrome'
-import { buildPainterCalendar, type CalendarDay } from '../../shared/calendarMock'
-import { GB_PLACES } from '../../shared/gbPlaces'
+import { useMemo, useState } from 'react'
+import { QuoteChrome, QuoteDoneCta } from '../../components/QuoteChrome'
 import {
   PAINT_TYPES,
   UNDERCOATS,
@@ -19,10 +16,6 @@ import {
 } from '../../shared/paintingQuote'
 
 export default function FreshCoat() {
-  const [days, setDays] = useState<CalendarDay[]>([])
-  useEffect(() => {
-    setDays(buildPainterCalendar(8))
-  }, [])
   const [step, setStep] = useState(1)
   const [walls, setWalls] = useState<WallSurface[]>([
     { id: 'wall-lounge-long', label: 'Lounge — long wall', widthM: 4.2, heightM: 2.4, qty: 1 },
@@ -31,19 +24,11 @@ export default function FreshCoat() {
   const [setting, setSetting] = useState<PaintSetting>('indoor')
   const [paintTypeId, setPaintTypeId] = useState<PaintTypeId>('standard')
   const [undercoatId, setUndercoatId] = useState<UndercoatId>('acrylic')
-  const [date, setDate] = useState<string>()
-  const [time, setTime] = useState<string>()
-  const [placeId, setPlaceId] = useState(GB_PLACES[0].id)
-  const [notes, setNotes] = useState('')
-  const [done, setDone] = useState(false)
 
   const estimate = useMemo(
     () => estimatePaintJob(walls, setting, paintTypeId, undercoatId),
     [walls, setting, paintTypeId, undercoatId],
   )
-  const selectedDay = days.find((d) => d.date === date)
-  const canWhen = Boolean(date && time)
-  const canConfirm = Boolean(estimate && canWhen)
 
   const updateWall = (id: string, patch: Partial<WallSurface>) => {
     setWalls((prev) => prev.map((w) => (w.id === id ? { ...w, ...patch } : w)))
@@ -53,65 +38,17 @@ export default function FreshCoat() {
     setWalls((prev) => (prev.length <= 1 ? prev : prev.filter((w) => w.id !== id)))
   }
 
-  if (done && estimate) {
-    return (
-      <main className="painting-page theme-freshcoat">
-        <QuoteChrome
-          theme="Fresh Coat"
-          title="Ballpark saved"
-          subtitle="Nothing was booked — this is a figure to talk through with Luca."
-          imageId="freshcoat"
-        />
-        <div className="yacht-panel success-panel demo-enter-success">
-          <h2>Ballpark quote</h2>
-          <p>
-            {estimate.totalAreaM2} m² · {setting} · {paintTypeById(paintTypeId)?.name}
-            {undercoatId !== 'none' ? ` · ${undercoatById(undercoatId)?.name}` : ''}
-          </p>
-          <p>
-            {date} @ {time} · {GB_PLACES.find((p) => p.id === placeId)?.name}
-          </p>
-          <p className="estimate-bracket">{formatPaintBracket(estimate)}</p>
-          <QuoteDoneCta />
-          <button
-            type="button"
-            className="btn ghost"
-            onClick={() => {
-              setDone(false)
-              setStep(1)
-            }}
-          >
-            Quote another job
-          </button>
-          <Link to="/" className="adventure-hub-link">
-            ← Home
-          </Link>
-        </div>
-        <QuoteCompare
-          compareTo="/quote/paintboard"
-          compareLabel="Paint Board"
-          engineNote="Same wall m² quote engine — wizard vs wall-board UI."
-        />
-      </main>
-    )
-  }
-
   return (
     <main className="painting-page theme-freshcoat">
       <QuoteChrome
         theme="Fresh Coat"
         title="Fresh Coat"
-        subtitle="Measure walls, choose paint and undercoat, get a Golden Bay ballpark."
+        subtitle="Measure walls, choose paint and undercoat, and see a Golden Bay ballpark figure."
         imageId="freshcoat"
-      />
-      <QuoteCompare
-        compareTo="/quote/paintboard"
-        compareLabel="Paint Board"
-        engineNote="Same wall m² quote engine — wizard vs wall-board UI."
       />
 
       <ol className="wizard-steps" aria-label="Quote steps">
-        {[1, 2, 3, 4].map((n) => (
+        {[1, 2, 3].map((n) => (
           <li key={n} className={step === n ? 'active' : step > n ? 'done' : ''}>
             {n}
           </li>
@@ -261,88 +198,17 @@ export default function FreshCoat() {
             <button type="button" className="btn ghost" onClick={() => setStep(1)}>
               Back
             </button>
-            <button type="button" className="btn primary" onClick={() => setStep(3)}>
-              Next: Schedule
+            <button type="button" className="btn primary" disabled={!estimate} onClick={() => setStep(3)}>
+              See ballpark
             </button>
           </div>
         </section>
       )}
 
-      {step === 3 && (
+      {step === 3 && estimate && (
         <section className="yacht-panel demo-enter">
-          <h2>3. Preferred window</h2>
-          <div className="day-rail" role="listbox" aria-label="Available days">
-            {days.map((d) => {
-              const openCount = d.slots.filter((s) => s.status === 'open').length
-              const blocked = openCount === 0
-              return (
-                <button
-                  key={d.date}
-                  type="button"
-                  role="option"
-                  aria-selected={date === d.date}
-                  disabled={blocked}
-                  className={`day-pill${date === d.date ? ' on' : ''}${blocked ? ' blocked' : ''}`}
-                  onClick={() => {
-                    setDate(d.date)
-                    setTime(undefined)
-                  }}
-                >
-                  <span>{d.label}</span>
-                  <small>{blocked ? 'Full' : `${openCount} open`}</small>
-                </button>
-              )
-            })}
-          </div>
-          {selectedDay && (
-            <div className="time-rail">
-              {selectedDay.slots.map((slot) => (
-                <button
-                  key={slot.time}
-                  type="button"
-                  disabled={slot.status !== 'open'}
-                  className={`time-chip status-${slot.status}${time === slot.time ? ' on' : ''}`}
-                  title={slot.note}
-                  onClick={() => setTime(slot.time)}
-                >
-                  {slot.time}
-                </button>
-              ))}
-            </div>
-          )}
-          <label className="field">
-            Area
-            <select value={placeId} onChange={(e) => setPlaceId(e.target.value)}>
-              {GB_PLACES.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="field">
-            Notes for Luca
-            <textarea
-              rows={3}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Colour codes, access, furniture move…"
-            />
-          </label>
-          <div className="btn-row">
-            <button type="button" className="btn ghost" onClick={() => setStep(2)}>
-              Back
-            </button>
-            <button type="button" className="btn primary" disabled={!canWhen} onClick={() => setStep(4)}>
-              Next: Review
-            </button>
-          </div>
-        </section>
-      )}
-
-      {step === 4 && estimate && (
-        <section className="yacht-panel demo-enter">
-          <h2>4. Automatic ballpark</h2>
+          <h2>3. Your ballpark figure</h2>
+          <p className="hint">Impression only — not a confirmed quote or booking.</p>
           <div className="summary">
             <p>
               <strong>Area:</strong> {estimate.totalAreaM2} m² ({setting})
@@ -351,14 +217,6 @@ export default function FreshCoat() {
               <strong>System:</strong> {paintTypeById(paintTypeId)?.name}
               {undercoatId !== 'none' ? ` + ${undercoatById(undercoatId)?.name}` : ''}
             </p>
-            <p>
-              <strong>When:</strong> {date} @ {time} · {GB_PLACES.find((p) => p.id === placeId)?.name}
-            </p>
-            {notes && (
-              <p>
-                <strong>Notes:</strong> {notes}
-              </p>
-            )}
             <ul className="quote-breakdown">
               <li>Labour ${estimate.labour.toFixed(2)}</li>
               <li>Materials ${estimate.materials.toFixed(2)}</li>
@@ -369,14 +227,14 @@ export default function FreshCoat() {
               )}
             </ul>
             <p className="estimate-bracket">Estimated cost {formatPaintBracket(estimate)}</p>
-            <p className="hint">Ballpark only — final quote after a site measure.</p>
           </div>
+          <QuoteDoneCta />
           <div className="btn-row">
-            <button type="button" className="btn ghost" onClick={() => setStep(3)}>
+            <button type="button" className="btn ghost" onClick={() => setStep(2)}>
               Back
             </button>
-            <button type="button" className="btn primary" disabled={!canConfirm} onClick={() => setDone(true)}>
-              Save ballpark
+            <button type="button" className="btn ghost" onClick={() => setStep(1)}>
+              Try another job
             </button>
           </div>
         </section>

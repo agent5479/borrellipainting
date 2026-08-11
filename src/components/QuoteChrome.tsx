@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
-import { HashLink } from './HashScroll'
 import type { DemoImageId } from '../shared/demoAssets'
 import { DemoImageTiles } from './DemoImages'
+import { HashLink } from './HashScroll'
 
 export function QuoteChrome({
   theme,
@@ -21,7 +21,7 @@ export function QuoteChrome({
           ← Home
         </Link>
         <div>
-          <p className="demo-badge">Ballpark only · not a confirmed booking</p>
+          <p className="demo-badge">Ballpark only · impression, not a quote</p>
           <h1>{title}</h1>
           {subtitle && <p className="demo-sub">{subtitle}</p>}
         </div>
@@ -32,35 +32,13 @@ export function QuoteChrome({
   )
 }
 
-export function QuoteCompare({
-  compareTo,
-  compareLabel,
-  engineNote,
-}: {
-  compareTo: string
-  compareLabel: string
-  engineNote?: string
-}) {
-  return (
-    <aside className="demo-pitch-bar" aria-label="Compare quote layouts">
-      <div className="demo-pitch-tier">
-        <span className="demo-pitch-kicker">Two layouts</span>
-        <span className="demo-pitch-hint">Same ballpark math — try the other layout</span>
-      </div>
-      <div className="demo-pitch-pair">
-        {engineNote && <p className="demo-pitch-engine">{engineNote}</p>}
-        <Link className="demo-pitch-compare" to={compareTo}>
-          Compare with {compareLabel} →
-        </Link>
-      </div>
-    </aside>
-  )
-}
-
 export function QuoteDoneCta() {
   return (
     <div className="demo-quote-cta">
-      <p>This is a ballpark only. Luca will confirm on site.</p>
+      <p>
+        This figure is an impression only — nothing is booked or emailed. Luca confirms the real
+        number on site.
+      </p>
       <HashLink className="btn primary" to="/#contact">
         Contact Luca
       </HashLink>

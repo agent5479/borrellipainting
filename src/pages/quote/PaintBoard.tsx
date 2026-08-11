@@ -1,16 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { DemoImageTiles } from '../../components/DemoImages'
-import { QuoteCompare, QuoteDoneCta } from '../../components/QuoteChrome'
-import { buildPainterCalendar, type CalendarDay } from '../../shared/calendarMock'
-import { GB_PLACES } from '../../shared/gbPlaces'
+import { QuoteDoneCta } from '../../components/QuoteChrome'
 import {
   PAINT_TYPES,
   UNDERCOATS,
   estimatePaintJob,
   formatPaintBracket,
   newWall,
-  paintTypeById,
   undercoatById,
   wallAreaM2,
   type PaintSetting,
@@ -20,10 +17,6 @@ import {
 } from '../../shared/paintingQuote'
 
 export default function PaintBoard() {
-  const [days, setDays] = useState<CalendarDay[]>([])
-  useEffect(() => {
-    setDays(buildPainterCalendar(8))
-  }, [])
   const [walls, setWalls] = useState<WallSurface[]>([
     { id: 'wall-street', label: 'Weatherboards — street', widthM: 8.0, heightM: 2.7, qty: 1 },
     { id: 'wall-side', label: 'Weatherboards — side', widthM: 5.5, heightM: 2.7, qty: 1 },
@@ -31,17 +24,11 @@ export default function PaintBoard() {
   const [setting, setSetting] = useState<PaintSetting>('outdoor')
   const [paintTypeId, setPaintTypeId] = useState<PaintTypeId>('exterior')
   const [undercoatId, setUndercoatId] = useState<UndercoatId>('acrylic')
-  const [date, setDate] = useState<string>()
-  const [time, setTime] = useState<string>()
-  const [placeId, setPlaceId] = useState('pohara')
-  const [done, setDone] = useState(false)
 
   const estimate = useMemo(
     () => estimatePaintJob(walls, setting, paintTypeId, undercoatId),
     [walls, setting, paintTypeId, undercoatId],
   )
-  const selectedDay = days.find((d) => d.date === date)
-  const canConfirm = Boolean(estimate && date && time)
 
   const updateWall = (id: string, patch: Partial<WallSurface>) => {
     setWalls((prev) => prev.map((w) => (w.id === id ? { ...w, ...patch } : w)))
@@ -51,36 +38,6 @@ export default function PaintBoard() {
     setWalls((prev) => (prev.length <= 1 ? prev : prev.filter((w) => w.id !== id)))
   }
 
-  if (done && estimate) {
-    return (
-      <main className="paintboard-page theme-paintboard">
-        <div className="adventure-launch-ok demo-enter-success">
-          <p className="demo-badge">Ballpark only · not a confirmed booking</p>
-          <h1>Board quote saved</h1>
-          <p>
-            {estimate.totalAreaM2} m² · {setting} · {paintTypeById(paintTypeId)?.name}
-          </p>
-          <p>
-            {date} @ {time}
-          </p>
-          <p className="estimate-bracket">{formatPaintBracket(estimate)}</p>
-          <QuoteDoneCta />
-          <button type="button" className="btn ghost" onClick={() => setDone(false)}>
-            Plan another quote
-          </button>
-          <Link to="/" className="adventure-hub-link">
-            ← Home
-          </Link>
-        </div>
-        <QuoteCompare
-          compareTo="/quote/freshcoat"
-          compareLabel="Fresh Coat"
-          engineNote="One engine, two interfaces — same m² quote math as Fresh Coat, board skin."
-        />
-      </main>
-    )
-  }
-
   return (
     <main className="paintboard-page theme-paintboard">
       <header className="paintboard-top">
@@ -88,18 +45,13 @@ export default function PaintBoard() {
           ← Home
         </Link>
         <div>
-          <p className="demo-badge">Paint Board · wall measure board</p>
+          <p className="demo-badge">Ballpark only · impression, not a quote</p>
           <h1>Pin the surfaces</h1>
-          <p className="demo-sub">Same automatic quote engine as Fresh Coat — live ballpark as you edit.</p>
+          <p className="demo-sub">Measure walls, pick a paint system, and see a live Golden Bay ballpark.</p>
         </div>
-        <span className="demo-theme-tag">Different UI · not a wizard</span>
+        <span className="demo-theme-tag">Paint Board</span>
       </header>
       <DemoImageTiles id="paintboard" />
-      <QuoteCompare
-        compareTo="/quote/freshcoat"
-        compareLabel="Fresh Coat"
-        engineNote="One engine, two interfaces — same m² quote math as Fresh Coat, board skin."
-      />
 
       <div className="paintboard-deck demo-enter">
         <aside className="paintboard-walls">
@@ -224,56 +176,6 @@ export default function PaintBoard() {
             </div>
           </section>
 
-          <section>
-            <h2>When</h2>
-            <div className="day-rail" role="listbox" aria-label="Available days">
-              {days.map((d) => {
-                const openCount = d.slots.filter((s) => s.status === 'open').length
-                const blocked = openCount === 0
-                return (
-                  <button
-                    key={d.date}
-                    type="button"
-                    disabled={blocked}
-                    className={`day-pill${date === d.date ? ' on' : ''}${blocked ? ' blocked' : ''}`}
-                    onClick={() => {
-                      setDate(d.date)
-                      setTime(undefined)
-                    }}
-                  >
-                    <span>{d.label}</span>
-                    <small>{blocked ? 'Full' : `${openCount} open`}</small>
-                  </button>
-                )
-              })}
-            </div>
-            {selectedDay && (
-              <div className="time-rail">
-                {selectedDay.slots.map((slot) => (
-                  <button
-                    key={slot.time}
-                    type="button"
-                    disabled={slot.status !== 'open'}
-                    className={`time-chip status-${slot.status}${time === slot.time ? ' on' : ''}`}
-                    onClick={() => setTime(slot.time)}
-                  >
-                    {slot.time}
-                  </button>
-                ))}
-              </div>
-            )}
-            <label className="field">
-              Area
-              <select value={placeId} onChange={(e) => setPlaceId(e.target.value)}>
-                {GB_PLACES.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </section>
-
           <div className="paintboard-estimate">
             {estimate ? (
               <>
@@ -292,15 +194,8 @@ export default function PaintBoard() {
               <p className="hint">Add wall sizes to see a ballpark.</p>
             )}
           </div>
-
-          <button
-            type="button"
-            className="btn primary launch-btn"
-            disabled={!canConfirm}
-            onClick={() => setDone(true)}
-          >
-            Save board quote
-          </button>
+          <p className="hint">Impression only — not a confirmed quote or booking.</p>
+          <QuoteDoneCta />
         </aside>
       </div>
     </main>

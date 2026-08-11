@@ -64,15 +64,16 @@ export default function Home() {
           <p className="section-kicker">Estimate tools</p>
           <h2 id="quote-heading">Get a ballpark quote</h2>
           <p className="band-lead">
-            Two interactive estimators for wall area, paint system, and a Golden Bay figure. Same
-            math, different layouts — try both; Luca confirms the real number on site.
+            Interactive estimators for wall area, paint system, and a Golden Bay figure. Use them
+            for an impression only — nothing is emailed or booked. Luca confirms the real number on
+            site.
           </p>
           <div className="quote-cards">
             <Link to="/quote/freshcoat" className="quote-card quote-card-fresh">
               <DemoCardImage id="freshcoat" />
               <span className="quote-kind">Step-by-step</span>
               <h3>Fresh Coat</h3>
-              <p>Wall sizes → indoor or outdoor → paint & undercoat → schedule → ballpark.</p>
+              <p>Wall sizes → indoor or outdoor → paint & undercoat → ballpark figure.</p>
               <span className="quote-go">Open estimator →</span>
             </Link>
             <Link to="/quote/paintboard" className="quote-card quote-card-board">

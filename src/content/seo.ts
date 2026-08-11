@@ -18,13 +18,13 @@ export const PAGES: Record<string, PageSeo> = {
     path: '/quote/freshcoat',
     title: 'Fresh Coat ballpark quote | Borrelli Painting',
     description:
-      'Step-through wall sizes, indoor or outdoor, paint system and a Golden Bay ballpark figure. One of two quote layouts from Borrelli Painting.',
+      'Step-through wall sizes, indoor or outdoor, paint system and a Golden Bay ballpark figure. Impression only — not a confirmed quote.',
   },
   '/quote/paintboard': {
     path: '/quote/paintboard',
     title: 'Paint Board ballpark quote | Borrelli Painting',
     description:
-      'Pin wall cards and paint chips with a live ballpark column. Same quote math as Fresh Coat — a different layout from Borrelli Painting.',
+      'Pin wall cards and paint chips with a live ballpark column. Get a Golden Bay impression figure — Luca confirms on site.',
   },
 }
 
