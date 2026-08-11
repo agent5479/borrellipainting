@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { DemoCardImage } from '../components/DemoImages'
-import { GALLERY_THEMES } from '../content/gallery'
+import { GALLERY_THEMES, WINDOW_PAIRS, WINDOW_STEPS } from '../content/gallery'
 import { AREA, FACEBOOK_URL, FOUNDER, PHONE_DISPLAY, PHONE_TEL, asset } from '../content/site'
 import { GB_PLACES } from '../shared/gbPlaces'
 
@@ -21,6 +21,10 @@ const SERVICES = [
     title: 'Character homes',
     text: 'Careful work on older and unusual houses — turrets, sunrooms, and mixed rooflines.',
   },
+  {
+    title: 'Old windows',
+    text: 'Repair and repaint of timber sashes — scrape, putty, prime, and a finish that still opens.',
+  },
 ]
 
 export default function Home() {
@@ -32,7 +36,8 @@ export default function Home() {
           <h1>Painting done properly — interiors, exteriors, and the odd character house.</h1>
           <p className="hero-lead">
             Borrelli Painting is Luca Borrelli: local, careful, and happy to talk through a job before
-            anyone opens a tin. Tākaka, Pōhara, Collingwood, and around the Bay.
+            anyone opens a tin — including the old timber windows that need more than a roller.
+            Tākaka, Pōhara, Collingwood, and around the Bay.
           </p>
           <div className="hero-actions">
             <a className="btn primary" href="#quote">
@@ -96,6 +101,42 @@ export default function Home() {
         </div>
       </section>
 
+      <section id="windows" className="band windows" aria-labelledby="windows-heading">
+        <div className="wrap">
+          <h2 id="windows-heading">Old window repair</h2>
+          <p className="band-lead">
+            Leadlights, awning sashes, and weathered timber in stucco walls. This is prep and
+            detailing — not a quick coat over flaking paint.
+          </p>
+          <ol className="window-steps">
+            {WINDOW_STEPS.map((step, i) => (
+              <li key={step.title}>
+                <span className="window-step-n">{i + 1}</span>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="ba-list">
+            {WINDOW_PAIRS.map((pair) => (
+              <article key={pair.title} className="ba-pair">
+                <h3 className="ba-title">{pair.title}</h3>
+                <div className="ba-shots">
+                  <figure>
+                    <img src={pair.before.src} alt={pair.before.alt} loading="lazy" />
+                    <figcaption>{pair.before.caption}</figcaption>
+                  </figure>
+                  <figure>
+                    <img src={pair.after.src} alt={pair.after.alt} loading="lazy" />
+                    <figcaption>{pair.after.caption}</figcaption>
+                  </figure>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="quote" className="band quotes" aria-labelledby="quote-heading">
         <div className="wrap">
           <h2 id="quote-heading">Ballpark quotes — two layouts</h2>
@@ -128,8 +169,8 @@ export default function Home() {
             <h2 id="about-heading">About Luca</h2>
             <p>
               Gianluca Borrelli — Luca — paints homes around Golden Bay. Interiors, exteriors, and
-              the jobs that need a bit more care: weatherboards, trim, and character houses that
-              were never a simple box.
+              the jobs that need a bit more care: weatherboards, trim, old timber windows, and
+              character houses that were never a simple box.
             </p>
             <p>
               If you want a number to start with, use one of the ballpark tools. For a real quote,

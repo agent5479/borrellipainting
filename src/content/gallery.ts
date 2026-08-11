@@ -50,26 +50,6 @@ export const GALLERY_THEMES: GalleryTheme[] = [
         alt: 'Stucco wall after painting',
         caption: 'After',
       },
-      {
-        src: asset('images/gallery/exteriors/stuccowindow-before.jpg'),
-        alt: 'Stucco and window before painting',
-        caption: 'Before',
-      },
-      {
-        src: asset('images/gallery/exteriors/stuccowindow-after.jpg'),
-        alt: 'Stucco and window after painting',
-        caption: 'After',
-      },
-      {
-        src: asset('images/gallery/exteriors/window-before.jpg'),
-        alt: 'Window and trim before painting',
-        caption: 'Before',
-      },
-      {
-        src: asset('images/gallery/exteriors/window-after.jpg'),
-        alt: 'Window and trim after painting',
-        caption: 'After',
-      },
     ],
   },
   {
@@ -115,5 +95,72 @@ export const GALLERY_THEMES: GalleryTheme[] = [
         alt: 'Exterior weatherboards mid-paint',
       },
     ],
+  },
+]
+
+export interface BeforeAfterPair {
+  title: string
+  before: GalleryImage
+  after: GalleryImage
+}
+
+export const WINDOW_PAIRS: BeforeAfterPair[] = [
+  {
+    title: 'Leadlight sash',
+    before: {
+      src: asset('images/gallery/exteriors/window-before.jpg'),
+      alt: 'Weathered wooden leadlight window with peeling paint and failed putty',
+      caption: 'Before',
+    },
+    after: {
+      src: asset('images/gallery/exteriors/window-after.jpg'),
+      alt: 'Restored leadlight sash in fresh white, still opening cleanly',
+      caption: 'After',
+    },
+  },
+  {
+    title: 'Awning pair',
+    before: {
+      src: asset('images/gallery/exteriors/stuccowindow-before.jpg'),
+      alt: 'Two-pane wooden awning window with flaking blue and clay paint',
+      caption: 'Before',
+    },
+    after: {
+      src: asset('images/gallery/exteriors/stuccowindow-after.jpg'),
+      alt: 'Same awning window cut in clean white against fresh stucco',
+      caption: 'After',
+    },
+  },
+  {
+    title: 'Elevation',
+    before: {
+      src: asset('images/gallery/exteriors/stuccowall-before.jpg'),
+      alt: 'Yellow stucco wall with three weathered wooden windows before repair',
+      caption: 'Before',
+    },
+    after: {
+      src: asset('images/gallery/exteriors/stuccowall-after.jpg'),
+      alt: 'Same elevation in light grey stucco with three restored white windows',
+      caption: 'After',
+    },
+  },
+]
+
+export const WINDOW_STEPS = [
+  {
+    title: 'Scrape and sand',
+    text: 'Failed coats come off the sash, sill, and frame so the next layers have something sound to hold.',
+  },
+  {
+    title: 'Timber, putty, hardware',
+    text: 'Soft wood, cracked putty, and tired stays get repaired so the window still opens and weathers.',
+  },
+  {
+    title: 'Prime and build',
+    text: 'A proper primer, then the finish coats — not a slap of enamel over loose paint.',
+  },
+  {
+    title: 'Cut in the sash',
+    text: 'Sharp lines on the stucco, clean arrises on the timber, and a sash that is not painted shut.',
   },
 ]

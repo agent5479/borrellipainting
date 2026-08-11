@@ -13,6 +13,7 @@ export function Layout() {
           </Link>
           <nav className="site-nav" aria-label="Primary">
             <Link to="/#work">Work</Link>
+            <Link to="/#windows">Windows</Link>
             <Link to="/#about">About</Link>
             <Link to="/#quote">Quote</Link>
             <Link to="/#contact">Contact</Link>
