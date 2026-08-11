@@ -84,6 +84,7 @@ export default function Home() {
                   {theme.images.map((img) => (
                     <figure key={img.src} className="gallery-item">
                       <img src={img.src} alt={img.alt} loading="lazy" />
+                      {img.caption && <figcaption>{img.caption}</figcaption>}
                     </figure>
                   ))}
                 </div>

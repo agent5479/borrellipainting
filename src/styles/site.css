@@ -287,6 +287,15 @@ main {
   border-radius: 12px;
 }
 
+.gallery-item figcaption {
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
 .gallery-empty {
   padding: 1.25rem;
   border-radius: 12px;
