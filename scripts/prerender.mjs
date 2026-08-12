@@ -11,8 +11,8 @@ const SITE = 'https://borrellipainting.nz'
 
 const routes = [
   { path: '/', file: 'dist/index.html' },
-  { path: '/quote/freshcoat', file: 'dist/quote/freshcoat/index.html' },
-  { path: '/quote/paintboard', file: 'dist/quote/paintboard/index.html' },
+  { path: '/quote/indoor', file: 'dist/quote/indoor/index.html' },
+  { path: '/quote/exterior', file: 'dist/quote/exterior/index.html' },
 ]
 
 for (const route of routes) {
@@ -39,13 +39,13 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>${SITE}/quote/freshcoat/</loc>
+    <loc>${SITE}/quote/indoor/</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>${SITE}/quote/paintboard/</loc>
+    <loc>${SITE}/quote/exterior/</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

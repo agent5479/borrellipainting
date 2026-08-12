@@ -14,17 +14,17 @@ export const PAGES: Record<string, PageSeo> = {
     description:
       'Borrelli Painting — Gianluca (Luca) Borrelli. Interior and exterior painting across Tākaka, Pōhara, Collingwood and Golden Bay. Ballpark quotes and quality finishes.',
   },
-  '/quote/freshcoat': {
-    path: '/quote/freshcoat',
-    title: 'Fresh Coat ballpark quote | Borrelli Painting',
+  '/quote/indoor': {
+    path: '/quote/indoor',
+    title: 'Indoor walls & ceilings calculator | Borrelli Painting',
     description:
-      'Step-through wall sizes, indoor or outdoor, paint system and a Golden Bay ballpark figure. Impression only — not a confirmed quote.',
+      'Simple indoor room calculator — walls, ceilings, paint and undercoat for a Golden Bay ballpark figure. Impression only — not a confirmed quote.',
   },
-  '/quote/paintboard': {
-    path: '/quote/paintboard',
-    title: 'Paint Board ballpark quote | Borrelli Painting',
+  '/quote/exterior': {
+    path: '/quote/exterior',
+    title: 'Weatherboards, corrugate & roof calculator | Borrelli Painting',
     description:
-      'Pin wall cards and paint chips with a live ballpark column. Get a Golden Bay impression figure — Luca confirms on site.',
+      'Exterior calculator for weatherboards, corrugated cladding and roof iron. Corrugation, pitch and extra labour built in. Impression only.',
   },
 }
 

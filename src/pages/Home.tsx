@@ -12,7 +12,7 @@ const SERVICES = [
   },
   {
     title: 'Exteriors',
-    text: 'Weatherboards, fascia, and joinery that have to stand up to Golden Bay weather.',
+    text: 'Weatherboards, fascia, corrugate, and roof iron that have to stand up to Golden Bay weather.',
   },
   {
     title: 'Weatherboards & trim',
@@ -64,24 +64,24 @@ export default function Home() {
           <p className="section-kicker">Estimate tools</p>
           <h2 id="quote-heading">Get a ballpark quote</h2>
           <p className="band-lead">
-            Interactive estimators for wall area, paint system, and a Golden Bay figure. Use them
-            for an impression only — nothing is emailed or booked. Luca confirms the real number on
-            site.
+            Two calculators: simple indoor rooms, or weatherboards, corrugate, and roof iron —
+            those take more paint and labour. Impression only — nothing is emailed or booked. Luca
+            confirms the real number on site.
           </p>
           <div className="quote-cards">
-            <Link to="/quote/freshcoat" className="quote-card quote-card-fresh">
+            <Link to="/quote/indoor" className="quote-card quote-card-fresh">
               <DemoCardImage id="freshcoat" />
-              <span className="quote-kind">Step-by-step</span>
-              <h3>Fresh Coat</h3>
-              <p>Wall sizes → indoor or outdoor → paint & undercoat → ballpark figure.</p>
-              <span className="quote-go">Open estimator →</span>
+              <span className="quote-kind">Simple indoor</span>
+              <h3>Indoor walls &amp; ceilings</h3>
+              <p>Room walls and ceilings → paint &amp; undercoat → ballpark figure.</p>
+              <span className="quote-go">Open calculator →</span>
             </Link>
-            <Link to="/quote/paintboard" className="quote-card quote-card-board">
+            <Link to="/quote/exterior" className="quote-card quote-card-board">
               <DemoCardImage id="paintboard" />
-              <span className="quote-kind">One-screen board</span>
-              <h3>Paint Board</h3>
-              <p>Pin wall cards and paint chips with a live ballpark column as you edit.</p>
-              <span className="quote-go">Open estimator →</span>
+              <span className="quote-kind">Exterior &amp; roof</span>
+              <h3>Weatherboards, corrugate &amp; roof</h3>
+              <p>Cladding, corrugations, and roof iron — extra area and labour built in.</p>
+              <span className="quote-go">Open calculator →</span>
             </Link>
           </div>
         </div>
@@ -176,8 +176,8 @@ export default function Home() {
               character houses that were never a simple box.
             </p>
             <p>
-              If you want a number to start with, use one of the ballpark tools above. For a real
-              quote, ring or message and he will come and look.
+              If you want a number to start with, use the indoor or exterior calculators above. For
+              a real quote, ring or message and he will come and look.
             </p>
           </div>
           <figure className="about-photo">

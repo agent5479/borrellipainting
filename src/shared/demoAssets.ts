@@ -40,6 +40,9 @@ export function demoTileList(id: DemoImageId, base = demoAssetBase(id)) {
 }
 
 export const DEMO_META: Record<DemoImageId, { title: string; alt: string }> = {
-  freshcoat: { title: 'Fresh Coat', alt: 'Interior wall being painted with a roller' },
-  paintboard: { title: 'Paint Board', alt: 'Exterior weatherboards mid-paint job' },
+  freshcoat: { title: 'Indoor walls & ceilings', alt: 'Interior wall being painted with a roller' },
+  paintboard: {
+    title: 'Weatherboards, corrugate & roof',
+    alt: 'Exterior weatherboards mid-paint job',
+  },
 }

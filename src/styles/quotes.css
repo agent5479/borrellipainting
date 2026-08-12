@@ -415,6 +415,7 @@
 .theme-paintboard .field select,
 .theme-paintboard .field input,
 .theme-paintboard .wall-board-label,
+.theme-paintboard .wall-board-kind,
 .theme-paintboard .wall-board-dims input {
   background: #1c222b;
   border-color: rgba(255, 255, 255, 0.18);
@@ -470,6 +471,51 @@
   justify-content: space-between;
   margin-top: 0.35rem;
   font-weight: 700;
+}
+
+.area-meta {
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.area-meta small,
+.area-paint {
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+.pitch-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+}
+
+.add-surface-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.wall-board-kind-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.wall-board-kind {
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-weight: 600;
 }
 
 .quote-breakdown {
@@ -572,7 +618,7 @@
 }
 
 .wall-board-dims input {
-  width: 4.2rem;
+  width: 5rem;
   padding: 0.4rem 0.45rem;
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -581,8 +627,14 @@
 .wall-board-foot {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 0.75rem;
   margin-top: 0.55rem;
+}
+
+.wall-board-foot strong {
+  font-size: 0.9rem;
+  line-height: 1.35;
 }
 
 .wall-board-foot button {
