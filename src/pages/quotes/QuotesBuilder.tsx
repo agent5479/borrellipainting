@@ -45,7 +45,6 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
   const [overrides, setOverrides] = useState<Record<string, number>>(() => loadPriceOverrides())
   const [settings, setSettings] = useState<QuoteSettings>(() => loadSettings())
   const [flash, setFlash] = useState('')
-  const [category, setCategory] = useState<CatalogCategory | 'all'>('all')
   const [search, setSearch] = useState('')
   const [customDesc, setCustomDesc] = useState('')
   const [customUnit, setCustomUnit] = useState<CatalogUnit | string>('each')
@@ -56,7 +55,6 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
   const catalog = useMemo(() => {
     const q = search.trim().toLowerCase()
     return QUOTE_CATALOG.filter((item) => {
-      if (category !== 'all' && item.category !== category) return false
       if (!q) return true
       return (
         item.name.toLowerCase().includes(q) ||
@@ -64,7 +62,20 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
         item.id.toLowerCase().includes(q)
       )
     })
-  }, [category, search])
+  }, [search])
+
+  const selectedCatalogIds = useMemo(() => {
+    return new Set(draft.lines.map((line) => line.catalogId).filter(Boolean))
+  }, [draft.lines])
+
+  const catalogByCategory = useMemo(() => {
+    const groups: { key: CatalogCategory; label: string; items: typeof catalog }[] = []
+    for (const key of Object.keys(CATEGORY_LABELS) as CatalogCategory[]) {
+      const items = catalog.filter((item) => item.category === key)
+      if (items.length) groups.push({ key, label: CATEGORY_LABELS[key], items })
+    }
+    return groups
+  }, [catalog])
 
   const subtotal = quoteSubtotal(draft.lines)
   const gst = quoteGst(subtotal, draft.includeGst)
@@ -94,13 +105,18 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
     setDraft((prev) => ({ ...prev, lines: prev.lines.filter((line) => line.id !== id) }))
   }
 
-  function addCatalogItem(catalogId: string) {
+  function toggleCatalogItem(catalogId: string, checked: boolean) {
     const item = QUOTE_CATALOG.find((c) => c.id === catalogId)
     if (!item) return
-    const line = lineFromCatalog(catalogId, unitPriceFor(item, overrides), 1)
-    if (!line) return
-    setDraft((prev) => ({ ...prev, lines: [...prev.lines, line] }))
-    showFlash(`Added ${item.name}`)
+    setDraft((prev) => {
+      if (checked) {
+        if (prev.lines.some((line) => line.catalogId === catalogId)) return prev
+        const line = lineFromCatalog(catalogId, unitPriceFor(item, overrides), 1)
+        if (!line) return prev
+        return { ...prev, lines: [...prev.lines, line] }
+      }
+      return { ...prev, lines: prev.lines.filter((line) => line.catalogId !== catalogId) }
+    })
   }
 
   function addCustom() {
@@ -199,7 +215,7 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
             <img src={asset('images/brand-logo.png')} alt="Borrelli Painting" width={180} height={72} />
             <div className="qt-brand-meta">
               <span className="qt-kicker">Internal</span>
-              <strong>Quote builder</strong>
+              <strong>Quote / invoice builder</strong>
             </div>
           </div>
           <div className="qt-header-actions">
@@ -210,7 +226,7 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
               Save draft
             </button>
             <button type="button" className="qt-btn" onClick={onExportPdf} disabled={pdfBusy}>
-              {pdfBusy ? 'Exporting…' : 'Export quote PDF'}
+              {pdfBusy ? 'Exporting…' : draft.docKind === 'invoice' ? 'Export invoice PDF' : 'Export quote PDF'}
             </button>
             <button type="button" className="qt-btn qt-btn-ghost" onClick={onLock}>
               Lock
@@ -247,10 +263,36 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
         {tab === 'quote' ? (
           <>
             <section className="qt-panel">
-              <h2>Client & quote</h2>
-              <div className="qt-grid qt-grid-3">
+              <h2>Client & document</h2>
+              <div className="qt-kind" role="radiogroup" aria-label="Document type">
+                <label className={`qt-kind-opt${draft.docKind === 'quote' ? ' on' : ''}`}>
+                  <input
+                    type="radio"
+                    name="qt-doc-kind"
+                    checked={draft.docKind === 'quote'}
+                    onChange={() => updateDraft({ docKind: 'quote' })}
+                  />
+                  <span>
+                    <strong>Quote</strong>
+                    <span>Estimate only — figures may vary by up to 20%.</span>
+                  </span>
+                </label>
+                <label className={`qt-kind-opt${draft.docKind === 'invoice' ? ' on' : ''}`}>
+                  <input
+                    type="radio"
+                    name="qt-doc-kind"
+                    checked={draft.docKind === 'invoice'}
+                    onChange={() => updateDraft({ docKind: 'invoice' })}
+                  />
+                  <span>
+                    <strong>Invoice</strong>
+                    <span>Final amount for the completed (or agreed) work.</span>
+                  </span>
+                </label>
+              </div>
+              <div className="qt-grid qt-grid-3" style={{ marginTop: '0.9rem' }}>
                 <div className="qt-field">
-                  <label htmlFor="qt-number">Quote number</label>
+                  <label htmlFor="qt-number">{draft.docKind === 'invoice' ? 'Invoice number' : 'Quote number'}</label>
                   <input
                     id="qt-number"
                     value={draft.quoteNumber}
@@ -311,7 +353,7 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
                   />
                 </div>
                 <div className="qt-field">
-                  <label htmlFor="qt-notes">Notes on quote</label>
+                  <label htmlFor="qt-notes">Notes</label>
                   <textarea
                     id="qt-notes"
                     value={draft.notes}
@@ -331,10 +373,11 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
             </section>
 
             <section className="qt-panel">
-              <h2>Add from catalog</h2>
-              <div className="qt-row" style={{ marginBottom: '0.75rem' }}>
-                <div className="qt-field" style={{ flex: '1 1 180px' }}>
-                  <label htmlFor="qt-search">Search</label>
+              <h2>Tick items to include</h2>
+              <p className="qt-muted">Ticked items become line items. Untick to remove them. Qty and rates can be edited below.</p>
+              <div className="qt-row" style={{ margin: '0.75rem 0' }}>
+                <div className="qt-field" style={{ flex: '1 1 220px' }}>
+                  <label htmlFor="qt-search">Filter</label>
                   <input
                     id="qt-search"
                     value={search}
@@ -342,42 +385,36 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
                     placeholder="walls, roof, primer…"
                   />
                 </div>
-                <div className="qt-field" style={{ flex: '0 1 180px' }}>
-                  <label htmlFor="qt-cat">Category</label>
-                  <select
-                    id="qt-cat"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value as CatalogCategory | 'all')}
-                  >
-                    <option value="all">All</option>
-                    {(Object.keys(CATEGORY_LABELS) as CatalogCategory[]).map((key) => (
-                      <option key={key} value={key}>
-                        {CATEGORY_LABELS[key]}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
-              <div className="qt-catalog">
-                {catalog.length === 0 ? (
-                  <p className="qt-empty">No catalog matches.</p>
-                ) : (
-                  catalog.map((item) => (
-                    <div key={item.id} className="qt-catalog-item">
-                      <div>
-                        <strong>{item.name}</strong>
-                        <span>
-                          {CATEGORY_LABELS[item.category]} · {formatMoney(unitPriceFor(item, overrides))}/
-                          {UNIT_LABELS[item.unit]} — {item.blurb}
-                        </span>
-                      </div>
-                      <button type="button" className="qt-btn qt-btn-ghost" onClick={() => addCatalogItem(item.id)}>
-                        Add
-                      </button>
+              {catalogByCategory.length === 0 ? (
+                <p className="qt-empty">No catalog matches.</p>
+              ) : (
+                catalogByCategory.map((group) => (
+                  <div key={group.key} className="qt-tick-block">
+                    <h3>{group.label}</h3>
+                    <div className="qt-tick-grid">
+                      {group.items.map((item) => {
+                        const on = selectedCatalogIds.has(item.id)
+                        return (
+                          <label key={item.id} className={`qt-tick${on ? ' on' : ''}`} title={item.blurb}>
+                            <input
+                              type="checkbox"
+                              checked={on}
+                              onChange={(e) => toggleCatalogItem(item.id, e.target.checked)}
+                            />
+                            <span>
+                              <strong>{item.name}</strong>
+                              <em>
+                                {formatMoney(unitPriceFor(item, overrides))}/{UNIT_LABELS[item.unit]}
+                              </em>
+                            </span>
+                          </label>
+                        )
+                      })}
                     </div>
-                  ))
-                )}
-              </div>
+                  </div>
+                ))
+              )}
 
               <h3>Custom line</h3>
               <div className="qt-row">
@@ -413,7 +450,7 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
             <section className="qt-panel">
               <h2>Line items</h2>
               {draft.lines.length === 0 ? (
-                <p className="qt-empty">No lines yet — add from the catalog or a custom line.</p>
+                <p className="qt-empty">No lines yet — tick catalog items or add a custom line.</p>
               ) : (
                 <div className="qt-table-wrap">
                   <table className="qt-table">

@@ -90,7 +90,9 @@ export async function exportQuotePdf(draft: QuoteDraft, settings: QuoteSettings)
     doc.text(SITE_NAME, margin, y + 8)
   }
 
-  // Document title box (invoice-style, top right)
+  const isInvoice = draft.docKind === 'invoice'
+  const docTitle = isInvoice ? 'TAX INVOICE' : 'QUOTE'
+  const docLabel = isInvoice ? 'Invoice' : 'Quote'
   const boxW = 58
   const boxX = pageW - margin - boxW
   doc.setDrawColor(...rule)
@@ -98,9 +100,9 @@ export async function exportQuotePdf(draft: QuoteDraft, settings: QuoteSettings)
   doc.setFillColor(250, 250, 248)
   doc.rect(boxX, y, boxW, 28, 'FD')
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(16)
+  doc.setFontSize(isInvoice ? 13 : 16)
   doc.setTextColor(...ink)
-  doc.text('QUOTE', boxX + boxW / 2, y + 10, { align: 'center' })
+  doc.text(docTitle, boxX + boxW / 2, y + 10, { align: 'center' })
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
   doc.setTextColor(...soft)
@@ -168,8 +170,12 @@ export async function exportQuotePdf(draft: QuoteDraft, settings: QuoteSettings)
   rightY += 5
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(9)
-  if (settings.validityDays > 0) {
+  if (!isInvoice && settings.validityDays > 0) {
     doc.text(`Valid for ${settings.validityDays} days`, colMid, rightY)
+    rightY += 4.5
+  }
+  if (!isInvoice) {
+    doc.text('Estimate — may vary by up to 20%', colMid, rightY)
     rightY += 4.5
   }
   doc.text(draft.includeGst ? 'Amounts excl. GST unless noted' : 'GST not included', colMid, rightY)
@@ -285,8 +291,15 @@ export async function exportQuotePdf(draft: QuoteDraft, settings: QuoteSettings)
   }
 
   const terms: string[] = []
-  if (settings.validityDays > 0) {
-    terms.push(`This quote is valid for ${settings.validityDays} days from the date above.`)
+  if (isInvoice) {
+    terms.push('This is a tax invoice for the amount due.')
+  } else {
+    terms.push(
+      'This is a quote, not a final invoice. Figures are estimates and may vary by up to 20% once the job is confirmed on site.',
+    )
+    if (settings.validityDays > 0) {
+      terms.push(`This quote is valid for ${settings.validityDays} days from the date above.`)
+    }
   }
   if (settings.bankDetails.trim()) {
     terms.push(`Payment details: ${settings.bankDetails.trim()}`)
@@ -295,7 +308,7 @@ export async function exportQuotePdf(draft: QuoteDraft, settings: QuoteSettings)
     terms.push(settings.paymentNotes.trim())
   }
   if (!terms.length) {
-    terms.push('Prices subject to site confirmation. Thank you for considering Borrelli Painting.')
+    terms.push('Thank you for considering Borrelli Painting.')
   }
 
   if (y > pageH - 40) {
@@ -328,7 +341,7 @@ export async function exportQuotePdf(draft: QuoteDraft, settings: QuoteSettings)
     doc.setFontSize(7)
     doc.setTextColor(...soft)
     doc.text(
-      `${SITE_NAME} · Quote ${draft.quoteNumber} · Page ${i} of ${pageCount}`,
+      `${SITE_NAME} · ${docLabel} ${draft.quoteNumber} · Page ${i} of ${pageCount}`,
       pageW / 2,
       pageH - 8,
       { align: 'center' },
@@ -336,5 +349,6 @@ export async function exportQuotePdf(draft: QuoteDraft, settings: QuoteSettings)
   }
 
   const name = safeFilenamePart(draft.client.name || draft.title || 'Client')
-  doc.save(`Borrelli-Quote-${name}-${draft.quoteDate}.pdf`)
+  const kindFile = isInvoice ? 'Invoice' : 'Quote'
+  doc.save(`Borrelli-${kindFile}-${name}-${draft.quoteDate}.pdf`)
 }

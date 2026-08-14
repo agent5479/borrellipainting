@@ -27,6 +27,8 @@ export interface QuoteDraft {
   client: QuoteClient
   lines: QuoteLine[]
   includeGst: boolean
+  /** Quote figures may move by up to 20%; invoice is the final amount. */
+  docKind: 'quote' | 'invoice'
 }
 
 export interface QuoteSettings {
@@ -53,28 +55,35 @@ export function todayIsoDate(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-export function makeQuoteNumber(date = todayIsoDate()): string {
+export function makeQuoteNumber(date = todayIsoDate(), kind: QuoteDraft['docKind'] = 'quote'): string {
   const stamp = date.replaceAll('-', '')
   const seq = Math.floor(Math.random() * 90 + 10)
-  return `BP-${stamp}-${seq}`
+  const prefix = kind === 'invoice' ? 'INV' : 'BP'
+  return `${prefix}-${stamp}-${seq}`
 }
 
 export function emptyClient(): QuoteClient {
   return { name: '', phone: '', email: '', address: '' }
 }
 
+export function normalizeDocKind(value: unknown): QuoteDraft['docKind'] {
+  return value === 'invoice' ? 'invoice' : 'quote'
+}
+
 export function createEmptyDraft(partial?: Partial<QuoteDraft>): QuoteDraft {
   const date = partial?.quoteDate ?? todayIsoDate()
+  const docKind = normalizeDocKind(partial?.docKind)
   return {
     id: partial?.id ?? newDraftId(),
     updatedAt: new Date().toISOString(),
-    quoteNumber: partial?.quoteNumber ?? makeQuoteNumber(date),
+    quoteNumber: partial?.quoteNumber ?? makeQuoteNumber(date, docKind),
     quoteDate: date,
     title: partial?.title ?? '',
     notes: partial?.notes ?? '',
     client: partial?.client ?? emptyClient(),
     lines: partial?.lines ?? [],
     includeGst: partial?.includeGst ?? true,
+    docKind,
   }
 }
 
@@ -174,6 +183,7 @@ export function loadDrafts(): QuoteDraft[] {
     if (!Array.isArray(parsed)) return []
     return parsed
       .filter((d) => d && typeof d.id === 'string' && Array.isArray(d.lines))
+      .map((d) => ({ ...d, docKind: normalizeDocKind(d.docKind) }))
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
   } catch {
     return []
@@ -203,7 +213,7 @@ export function duplicateDraft(draft: QuoteDraft): QuoteDraft {
   return createEmptyDraft({
     ...draft,
     id: newDraftId(),
-    quoteNumber: makeQuoteNumber(),
+    quoteNumber: makeQuoteNumber(todayIsoDate(), normalizeDocKind(draft.docKind)),
     quoteDate: todayIsoDate(),
     title: draft.title ? `${draft.title} (copy)` : '',
     lines: draft.lines.map((l) => ({ ...l, id: newLineId() })),
