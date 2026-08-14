@@ -210,7 +210,7 @@ export function QuotesBuilder({ onLock }: QuotesBuilderProps) {
               Save draft
             </button>
             <button type="button" className="qt-btn" onClick={onExportPdf} disabled={pdfBusy}>
-              {pdfBusy ? 'Exporting…' : 'Export PDF'}
+              {pdfBusy ? 'Exporting…' : 'Export quote PDF'}
             </button>
             <button type="button" className="qt-btn qt-btn-ghost" onClick={onLock}>
               Lock

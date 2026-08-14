@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { BallparkExportActions } from '../../components/BallparkExportActions'
 import { DemoImageTiles } from '../../components/DemoImages'
 import { QuoteDoneCta } from '../../components/QuoteChrome'
 import {
@@ -303,6 +304,7 @@ export default function ExteriorSurfaces() {
               {undercoatId !== 'none' ? ` + ${undercoatById(undercoatId)?.name}` : ''}.
             </p>
           )}
+          {estimate ? <BallparkExportActions estimate={estimate} /> : null}
           <QuoteDoneCta />
         </aside>
       </div>

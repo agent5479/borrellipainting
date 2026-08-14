@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { BallparkExportActions } from '../../components/BallparkExportActions'
 import { QuoteChrome, QuoteDoneCta } from '../../components/QuoteChrome'
 import {
   INDOOR_SURFACE_KINDS,
@@ -290,6 +291,7 @@ export default function IndoorRooms() {
             </ul>
             <p className="estimate-bracket">Estimated cost {formatPaintBracket(estimate)}</p>
           </div>
+          <BallparkExportActions estimate={estimate} />
           <QuoteDoneCta />
           <div className="btn-row">
             <button type="button" className="btn ghost" onClick={() => setStep(2)}>

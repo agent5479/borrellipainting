@@ -40,95 +40,146 @@ async function loadLogoDataUrl(): Promise<string | null> {
 }
 
 function safeFilenamePart(value: string): string {
-  return value
-    .trim()
-    .replace(/[^\w\s-]+/g, '')
-    .replace(/\s+/g, '-')
-    .slice(0, 40) || 'Client'
+  return (
+    value
+      .trim()
+      .replace(/[^\w\s-]+/g, '')
+      .replace(/\s+/g, '-')
+      .slice(0, 40) || 'Client'
+  )
 }
 
+function formatNzDate(iso: string): string {
+  const d = new Date(`${iso}T12:00:00`)
+  if (Number.isNaN(d.getTime())) return iso
+  return d.toLocaleDateString('en-NZ', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
+/** Traditional quote / tax-invoice style PDF for staff use. */
 export async function exportQuotePdf(draft: QuoteDraft, settings: QuoteSettings): Promise<void> {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' }) as DocWithAutoTable
   const pageW = doc.internal.pageSize.getWidth()
-  const margin = 16
-  let y = 14
+  const pageH = doc.internal.pageSize.getHeight()
+  const margin = 15
+  const contentW = pageW - margin * 2
+  let y = 12
+
+  const ink: [number, number, number] = [40, 40, 40]
+  const soft: [number, number, number] = [100, 100, 100]
+  const rule: [number, number, number] = [180, 180, 180]
+  const brand: [number, number, number] = [44, 123, 184]
 
   const logo = await loadLogoDataUrl()
   if (logo) {
     try {
-      doc.addImage(logo, 'PNG', margin, y, 42, 17)
+      doc.addImage(logo, 'PNG', margin, y, 40, 16)
     } catch {
-      // fall through to text letterhead
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(14)
+      doc.setTextColor(...brand)
+      doc.text(SITE_NAME, margin, y + 8)
     }
+  } else {
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(14)
+    doc.setTextColor(...brand)
+    doc.text(SITE_NAME, margin, y + 8)
   }
 
+  // Document title box (invoice-style, top right)
+  const boxW = 58
+  const boxX = pageW - margin - boxW
+  doc.setDrawColor(...rule)
+  doc.setLineWidth(0.35)
+  doc.setFillColor(250, 250, 248)
+  doc.rect(boxX, y, boxW, 28, 'FD')
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(16)
-  doc.setTextColor(44, 123, 184)
-  doc.text(SITE_NAME, pageW - margin, y + 6, { align: 'right' })
+  doc.setTextColor(...ink)
+  doc.text('QUOTE', boxX + boxW / 2, y + 10, { align: 'center' })
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(9)
-  doc.setTextColor(58, 58, 58)
-  const rightMeta = [
-    FOUNDER,
-    PHONE_DISPLAY,
-    AREA,
-    SITE_URL.replace(/^https?:\/\//, ''),
-  ]
-  if (settings.businessEmail.trim()) rightMeta.push(settings.businessEmail.trim())
-  if (settings.gstNumber.trim()) rightMeta.push(`GST ${settings.gstNumber.trim()}`)
-  doc.text(rightMeta, pageW - margin, y + 12, { align: 'right' })
+  doc.setFontSize(8)
+  doc.setTextColor(...soft)
+  doc.text(`No. ${draft.quoteNumber}`, boxX + boxW / 2, y + 17, { align: 'center' })
+  doc.text(formatNzDate(draft.quoteDate), boxX + boxW / 2, y + 23, { align: 'center' })
 
-  y = 38
-  doc.setDrawColor(184, 217, 74)
-  doc.setLineWidth(0.8)
+  // From block under logo
+  y = 32
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  doc.setTextColor(...ink)
+  doc.text(SITE_NAME, margin, y)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(...soft)
+  const fromLines = [FOUNDER, PHONE_DISPLAY, AREA, SITE_URL.replace(/^https?:\/\//, '')]
+  if (settings.businessEmail.trim()) fromLines.push(settings.businessEmail.trim())
+  if (settings.gstNumber.trim()) fromLines.push(`GST ${settings.gstNumber.trim()}`)
+  let fromY = y + 4.5
+  for (const line of fromLines) {
+    doc.text(line, margin, fromY)
+    fromY += 3.8
+  }
+
+  y = Math.max(fromY, y + 28) + 4
+  doc.setDrawColor(...ink)
+  doc.setLineWidth(0.5)
   doc.line(margin, y, pageW - margin, y)
-  doc.setDrawColor(62, 200, 200)
-  doc.line(margin, y + 1.2, pageW - margin, y + 1.2)
-  doc.setDrawColor(44, 123, 184)
-  doc.line(margin, y + 2.4, pageW - margin, y + 2.4)
+  y += 8
 
-  y = 48
+  // Bill to / job meta
+  const colMid = margin + contentW / 2 + 4
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(18)
-  doc.setTextColor(47, 47, 47)
-  doc.text('Quote', margin, y)
-
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(10)
-  doc.setTextColor(58, 58, 58)
-  doc.text(`Quote no. ${draft.quoteNumber}`, pageW - margin, y, { align: 'right' })
-  doc.text(`Date ${draft.quoteDate}`, pageW - margin, y + 6, { align: 'right' })
-  if (settings.validityDays > 0) {
-    doc.text(`Valid ${settings.validityDays} days`, pageW - margin, y + 12, { align: 'right' })
-  }
-
-  y += 10
-  if (draft.title.trim()) {
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(12)
-    doc.text(draft.title.trim(), margin, y)
-    y += 8
-  }
-
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(10)
-  doc.text('Prepared for', margin, y)
+  doc.setFontSize(8)
+  doc.setTextColor(...soft)
+  doc.text('BILL TO', margin, y)
+  doc.text('JOB', colMid, y)
   y += 5
   doc.setFont('helvetica', 'normal')
-  const clientLines = [
+  doc.setFontSize(10)
+  doc.setTextColor(...ink)
+
+  const billLines = [
     draft.client.name.trim() || '—',
+    draft.client.address.trim(),
     draft.client.phone.trim(),
     draft.client.email.trim(),
-    draft.client.address.trim(),
   ].filter(Boolean)
-  for (const line of clientLines) {
-    doc.text(line, margin, y)
-    y += 5
+
+  let leftY = y
+  doc.setFont('helvetica', 'bold')
+  doc.text(billLines[0] ?? '—', margin, leftY)
+  leftY += 5
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(9)
+  for (const line of billLines.slice(1)) {
+    doc.text(line, margin, leftY)
+    leftY += 4.5
   }
 
-  y += 4
-  const body = draft.lines.map((line) => [
+  let rightY = y
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  doc.text(draft.title.trim() || 'Painting works', colMid, rightY)
+  rightY += 5
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(9)
+  if (settings.validityDays > 0) {
+    doc.text(`Valid for ${settings.validityDays} days`, colMid, rightY)
+    rightY += 4.5
+  }
+  doc.text(draft.includeGst ? 'Amounts excl. GST unless noted' : 'GST not included', colMid, rightY)
+  rightY += 4.5
+
+  y = Math.max(leftY, rightY) + 6
+
+  // Line items table — classic invoice grid
+  const body = draft.lines.map((line, index) => [
+    String(index + 1),
     line.description,
     unitLabel(line.unit),
     String(line.qty),
@@ -138,80 +189,150 @@ export async function exportQuotePdf(draft: QuoteDraft, settings: QuoteSettings)
 
   autoTable(doc, {
     startY: y,
-    head: [['Description', 'Unit', 'Qty', 'Rate', 'Amount']],
+    head: [['#', 'Description', 'Unit', 'Qty', 'Rate', 'Amount']],
     body: body.length
       ? body
-      : [['No line items', '—', '—', '—', formatMoney(0)]],
+      : [['—', 'No line items', '—', '—', '—', formatMoney(0)]],
     margin: { left: margin, right: margin },
+    theme: 'grid',
     styles: {
       font: 'helvetica',
       fontSize: 9,
-      textColor: [58, 58, 58],
-      cellPadding: 2.2,
+      textColor: ink,
+      lineColor: rule,
+      lineWidth: 0.2,
+      cellPadding: 2.4,
+      valign: 'middle',
     },
     headStyles: {
-      fillColor: [44, 123, 184],
-      textColor: [255, 255, 255],
+      fillColor: [245, 245, 243],
+      textColor: ink,
       fontStyle: 'bold',
+      lineColor: rule,
+      lineWidth: 0.25,
     },
     columnStyles: {
-      1: { halign: 'center', cellWidth: 18 },
-      2: { halign: 'right', cellWidth: 16 },
-      3: { halign: 'right', cellWidth: 28 },
-      4: { halign: 'right', cellWidth: 30 },
+      0: { cellWidth: 10, halign: 'center' },
+      2: { cellWidth: 16, halign: 'center' },
+      3: { cellWidth: 16, halign: 'right' },
+      4: { cellWidth: 28, halign: 'right' },
+      5: { cellWidth: 30, halign: 'right' },
     },
   })
 
-  y = (doc.lastAutoTable?.finalY ?? y) + 8
+  y = (doc.lastAutoTable?.finalY ?? y) + 6
+
   const subtotal = quoteSubtotal(draft.lines)
   const gst = quoteGst(subtotal, draft.includeGst)
   const total = quoteGrandTotal(draft.lines, draft.includeGst)
 
-  const totalsX = pageW - margin
-  const labelX = totalsX - 55
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'normal')
-  doc.text('Subtotal', labelX, y)
-  doc.text(formatMoney(subtotal), totalsX, y, { align: 'right' })
-  y += 6
+  // Totals box — classic invoice right column
+  const totalsW = 72
+  const totalsX = pageW - margin - totalsW
+  const rowH = 7
+  const rows: { label: string; value: string; bold?: boolean; fill?: boolean }[] = [
+    { label: 'Subtotal', value: formatMoney(subtotal) },
+  ]
   if (draft.includeGst) {
-    doc.text('GST (15%)', labelX, y)
-    doc.text(formatMoney(gst), totalsX, y, { align: 'right' })
-    y += 6
+    rows.push({ label: 'GST (15%)', value: formatMoney(gst) })
   }
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(12)
-  doc.text(draft.includeGst ? 'Total (incl. GST)' : 'Total', labelX, y)
-  doc.text(formatMoney(total), totalsX, y, { align: 'right' })
+  rows.push({
+    label: draft.includeGst ? 'Total (incl. GST)' : 'Total',
+    value: formatMoney(total),
+    bold: true,
+    fill: true,
+  })
 
-  y += 12
+  const boxH = rows.length * rowH + 2
+  doc.setDrawColor(...rule)
+  doc.setLineWidth(0.3)
+  doc.rect(totalsX, y, totalsW, boxH)
+
+  let ty = y + 5
+  for (const row of rows) {
+    if (row.fill) {
+      doc.setFillColor(245, 245, 243)
+      doc.rect(totalsX, ty - 4.5, totalsW, rowH, 'F')
+      doc.setDrawColor(...rule)
+      doc.rect(totalsX, y, totalsW, boxH)
+    }
+    doc.setFont('helvetica', row.bold ? 'bold' : 'normal')
+    doc.setFontSize(row.bold ? 10 : 9)
+    doc.setTextColor(...ink)
+    doc.text(row.label, totalsX + 3, ty)
+    doc.text(row.value, totalsX + totalsW - 3, ty, { align: 'right' })
+    ty += rowH
+  }
+
+  y = Math.max(y + boxH + 10, y + 10)
+
   if (draft.notes.trim()) {
+    if (y > pageH - 50) {
+      doc.addPage()
+      y = margin
+    }
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
-    doc.text('Notes', margin, y)
+    doc.setFontSize(8)
+    doc.setTextColor(...soft)
+    doc.text('NOTES / SCOPE', margin, y)
     y += 5
     doc.setFont('helvetica', 'normal')
-    const notes = doc.splitTextToSize(draft.notes.trim(), pageW - margin * 2)
+    doc.setFontSize(9)
+    doc.setTextColor(...ink)
+    const notes = doc.splitTextToSize(draft.notes.trim(), contentW)
     doc.text(notes, margin, y)
-    y += notes.length * 5 + 4
+    y += notes.length * 4.2 + 6
   }
 
-  const footerBits: string[] = []
-  if (settings.bankDetails.trim()) footerBits.push(`Payment: ${settings.bankDetails.trim()}`)
-  if (settings.paymentNotes.trim()) footerBits.push(settings.paymentNotes.trim())
-  if (footerBits.length) {
-    if (y > 260) {
-      doc.addPage()
-      y = 20
-    }
+  const terms: string[] = []
+  if (settings.validityDays > 0) {
+    terms.push(`This quote is valid for ${settings.validityDays} days from the date above.`)
+  }
+  if (settings.bankDetails.trim()) {
+    terms.push(`Payment details: ${settings.bankDetails.trim()}`)
+  }
+  if (settings.paymentNotes.trim()) {
+    terms.push(settings.paymentNotes.trim())
+  }
+  if (!terms.length) {
+    terms.push('Prices subject to site confirmation. Thank you for considering Borrelli Painting.')
+  }
+
+  if (y > pageH - 40) {
+    doc.addPage()
+    y = margin
+  }
+
+  doc.setDrawColor(...rule)
+  doc.setLineWidth(0.25)
+  doc.line(margin, y, pageW - margin, y)
+  y += 6
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8)
+  doc.setTextColor(...soft)
+  doc.text('TERMS', margin, y)
+  y += 4.5
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8)
+  for (const term of terms) {
+    const wrapped = doc.splitTextToSize(term, contentW)
+    doc.text(wrapped, margin, y)
+    y += wrapped.length * 3.6 + 1.5
+  }
+
+  // Footer page numbers
+  const pageCount = doc.getNumberOfPages()
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i)
     doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8)
-    doc.setTextColor(107, 107, 107)
-    for (const bit of footerBits) {
-      const lines = doc.splitTextToSize(bit, pageW - margin * 2)
-      doc.text(lines, margin, y)
-      y += lines.length * 4 + 2
-    }
+    doc.setFontSize(7)
+    doc.setTextColor(...soft)
+    doc.text(
+      `${SITE_NAME} · Quote ${draft.quoteNumber} · Page ${i} of ${pageCount}`,
+      pageW / 2,
+      pageH - 8,
+      { align: 'center' },
+    )
   }
 
   const name = safeFilenamePart(draft.client.name || draft.title || 'Client')

@@ -705,6 +705,20 @@
   margin: 0 0 0.75rem;
 }
 
+.ballpark-export {
+  margin: 1rem 0 0.25rem;
+}
+
+.ballpark-export .btn-row {
+  margin-top: 0;
+}
+
+.ballpark-export-status {
+  margin: 0.5rem 0 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
 @media (max-width: 640px) {
   .demo-chrome,
   .paintboard-top,
