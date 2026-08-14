@@ -104,8 +104,8 @@ export default function ExteriorSurfaces() {
   return (
     <main className="paintboard-page theme-paintboard">
       <header className="paintboard-top">
-        <Link to="/" className="demo-back">
-          ← Home
+        <Link to="/quotes" className="demo-back">
+          ← Ballpark tools
         </Link>
         <div>
           <p className="demo-badge">Ballpark only · impression, not a quote</p>

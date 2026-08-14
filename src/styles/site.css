@@ -402,6 +402,35 @@ main {
   background: #fff;
 }
 
+.visit-quote {
+  background: #fff;
+}
+
+.visit-quote-grid {
+  display: grid;
+  gap: 1.75rem;
+  align-items: center;
+}
+
+@media (min-width: 860px) {
+  .visit-quote-grid {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 2.5rem;
+  }
+}
+
+.visit-quote-photo {
+  margin: 0;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.visit-quote-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .quote-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

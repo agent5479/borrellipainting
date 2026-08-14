@@ -35,7 +35,7 @@ export function QuotesLogin({ onUnlocked }: QuotesLoginProps) {
     <div className="qt-login">
       <div className="qt-login-card">
         <p className="qt-kicker">Borrelli Painting</p>
-        <h1>Quotes</h1>
+        <h1>Quote builder</h1>
         <p className="qt-muted">Staff login — not linked from the public site.</p>
         {!configured ? (
           <p className="qt-flash qt-flash-error" role="alert">

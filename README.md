@@ -17,7 +17,7 @@ The app is served from the site root (custom domain on GitHub Pages).
 npm run build
 ```
 
-Builds the React app and prerenders `/`, `/quote/freshcoat`, and `/quote/paintboard` to static HTML for SEO.
+Builds the React app and prerenders `/` to static HTML for SEO. Unlisted ballpark tools live at `/quotes` (not in the sitemap).
 
 ## Gallery photos
 

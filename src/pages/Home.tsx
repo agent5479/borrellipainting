@@ -1,6 +1,4 @@
-import { Link } from 'react-router-dom'
 import { HashLink } from '../components/HashScroll'
-import { DemoCardImage } from '../components/DemoImages'
 import { GALLERY_THEMES, WINDOW_PAIRS, WINDOW_STEPS } from '../content/gallery'
 import { AREA, FACEBOOK_URL, FOUNDER, PHONE_DISPLAY, PHONE_TEL, asset } from '../content/site'
 import { GB_PLACES } from '../shared/gbPlaces'
@@ -36,13 +34,13 @@ export default function Home() {
           <p className="hero-kicker">Golden Bay · {FOUNDER}</p>
           <h1>Painting done properly — interiors, exteriors, and the odd character house.</h1>
           <p className="hero-lead">
-            Borrelli Painting is Luca Borrelli: local, careful, and happy to talk through a job before
-            anyone opens a tin — including the old timber windows that need more than a roller.
-            Tākaka, Pōhara, Collingwood, and around the Bay.
+            Borrelli Painting is Luca Borrelli: local, careful, and happiest when he can walk your
+            place with you before anyone opens a tin — including the old timber windows that need
+            more than a roller. Tākaka, Pōhara, Collingwood, and around the Bay.
           </p>
           <div className="hero-actions">
             <HashLink className="btn primary" to="/#quote">
-              Get a ballpark
+              Ask Luca to visit
             </HashLink>
             <HashLink className="btn ghost" to="/#contact">
               Contact
@@ -59,31 +57,40 @@ export default function Home() {
         </figure>
       </section>
 
-      <section id="quote" className="band quotes" aria-labelledby="quote-heading">
-        <div className="wrap">
-          <p className="section-kicker">Estimate tools</p>
-          <h2 id="quote-heading">Get a ballpark quote</h2>
-          <p className="band-lead">
-            Two calculators: simple indoor rooms, or weatherboards, corrugate, and roof iron —
-            those take more paint and labour. Impression only — nothing is emailed or booked. Luca
-            confirms the real number on site.
-          </p>
-          <div className="quote-cards">
-            <Link to="/quote/indoor" className="quote-card quote-card-fresh">
-              <DemoCardImage id="freshcoat" />
-              <span className="quote-kind">Simple indoor</span>
-              <h3>Indoor rooms</h3>
-              <p>Walls, ceiling, skirting, windows &amp; trim → paint system → ballpark figure.</p>
-              <span className="quote-go">Open calculator →</span>
-            </Link>
-            <Link to="/quote/exterior" className="quote-card quote-card-board">
-              <DemoCardImage id="paintboard" />
-              <span className="quote-kind">Exterior &amp; roof</span>
-              <h3>Weatherboards, corrugate &amp; roof</h3>
-              <p>Cladding, corrugations, and roof iron — extra area and labour built in.</p>
-              <span className="quote-go">Open calculator →</span>
-            </Link>
+      <section id="quote" className="band visit-quote" aria-labelledby="quote-heading">
+        <div className="wrap visit-quote-grid">
+          <div>
+            <p className="section-kicker">Real quotes</p>
+            <h2 id="quote-heading">Get Luca over to your place</h2>
+            <p className="band-lead">
+              Gianluca&apos;s specialty is showing up, looking properly, and talking the job through
+              with you — what needs doing, what can wait, and a number you can trust. Online
+              calculators miss the damp patch, the fiddly eaves, and the conversation that makes a
+              quote feel fair.
+            </p>
+            <p className="band-lead">
+              Ring or message him. He will come out around Golden Bay, walk the job with you, and
+              quote in person. That is the bit he is good at: being there, being clear, and being
+              someone you can talk to.
+            </p>
+            <div className="hero-actions">
+              <a className="btn primary" href={`tel:${PHONE_TEL}`}>
+                Call {PHONE_DISPLAY}
+              </a>
+              <HashLink className="btn ghost" to="/#contact">
+                Contact details
+              </HashLink>
+            </div>
           </div>
+          <figure className="visit-quote-photo">
+            <img
+              src={asset('images/gallery/exteriors/painted-steeple-house.jpg')}
+              alt="Character home in Golden Bay after careful exterior painting"
+              width={800}
+              height={533}
+              loading="lazy"
+            />
+          </figure>
         </div>
       </section>
 
@@ -176,8 +183,8 @@ export default function Home() {
               character houses that were never a simple box.
             </p>
             <p>
-              If you want a number to start with, use the indoor or exterior calculators above. For
-              a real quote, ring or message and he will come and look.
+              He would rather come and see the job than guess from a form. Ring or message, invite
+              him over, and get a quote from someone who has stood in the room with you.
             </p>
           </div>
           <figure className="about-photo">

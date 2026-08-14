@@ -9,11 +9,8 @@ const { render } = await import(pathToFileURL(serverEntry).href)
 
 const SITE = 'https://borrellipainting.nz'
 
-const routes = [
-  { path: '/', file: 'dist/index.html' },
-  { path: '/quote/indoor', file: 'dist/quote/indoor/index.html' },
-  { path: '/quote/exterior', file: 'dist/quote/exterior/index.html' },
-]
+// Public homepage only in sitemap. Ballpark /quotes tools are unlisted (noindex, not advertised).
+const routes = [{ path: '/', file: 'dist/index.html' }]
 
 for (const route of routes) {
   const { html, head } = render(route.path)
@@ -37,18 +34,6 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>${SITE}/quote/indoor/</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>${SITE}/quote/exterior/</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
   </url>
 </urlset>
 `

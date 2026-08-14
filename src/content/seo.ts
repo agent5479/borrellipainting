@@ -13,23 +13,32 @@ export const PAGES: Record<string, PageSeo> = {
     path: '/',
     title: 'Borrelli Painting · Gianluca Borrelli | Golden Bay painter',
     description:
-      'Borrelli Painting — Gianluca (Luca) Borrelli. Interior and exterior painting across Tākaka, Pōhara, Collingwood and Golden Bay. Ballpark quotes and quality finishes.',
-  },
-  '/quote/indoor': {
-    path: '/quote/indoor',
-    title: 'Indoor rooms calculator | Borrelli Painting',
-    description:
-      'Indoor room calculator — walls, ceilings, skirting, windows and trim for a Golden Bay ballpark figure. Impression only — not a confirmed quote.',
-  },
-  '/quote/exterior': {
-    path: '/quote/exterior',
-    title: 'Weatherboards, corrugate & roof calculator | Borrelli Painting',
-    description:
-      'Exterior calculator for weatherboards, corrugated cladding and roof iron. Corrugation, pitch and extra labour built in. Impression only.',
+      'Borrelli Painting — Gianluca (Luca) Borrelli. Interior and exterior painting across Tākaka, Pōhara, Collingwood and Golden Bay. Ask Luca to visit for a proper on-site quote.',
   },
   '/quotes': {
     path: '/quotes',
-    title: 'Quotes | Borrelli Painting',
+    title: 'Ballpark estimate tools | Borrelli Painting',
+    description:
+      'Unlisted indoor and exterior ballpark calculators. Impression only — Luca prefers to quote in person.',
+    robots: 'noindex,nofollow',
+  },
+  '/quotes/indoor': {
+    path: '/quotes/indoor',
+    title: 'Indoor rooms calculator | Borrelli Painting',
+    description:
+      'Indoor room calculator — walls, ceilings, skirting, windows and trim for a Golden Bay ballpark figure. Impression only — not a confirmed quote.',
+    robots: 'noindex,nofollow',
+  },
+  '/quotes/exterior': {
+    path: '/quotes/exterior',
+    title: 'Weatherboards, corrugate & roof calculator | Borrelli Painting',
+    description:
+      'Exterior calculator for weatherboards, corrugated cladding and roof iron. Corrugation, pitch and extra labour built in. Impression only.',
+    robots: 'noindex,nofollow',
+  },
+  '/quotes/admin': {
+    path: '/quotes/admin',
+    title: 'Quote builder | Borrelli Painting',
     description: 'Internal quote builder for Borrelli Painting.',
     robots: 'noindex,nofollow',
   },

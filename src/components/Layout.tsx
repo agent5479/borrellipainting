@@ -14,7 +14,7 @@ export function Layout() {
             <img src={asset('images/brand-logo.png')} alt="Borrelli Painting" width={220} height={88} />
           </Link>
           <nav className="site-nav" aria-label="Primary">
-            <HashLink to="/#quote">Quote</HashLink>
+            <HashLink to="/#quote">Get a quote</HashLink>
             <HashLink to="/#work">Work</HashLink>
             <HashLink to="/#windows">Windows</HashLink>
             <HashLink to="/#about">About</HashLink>
@@ -35,7 +35,9 @@ export function Layout() {
               Facebook
             </a>
           </p>
-          <p className="site-footer-fine">Ballpark quotes are estimates only — Luca confirms on site.</p>
+          <p className="site-footer-fine">
+            Best quotes happen on site — ring Luca and he will come and look.
+          </p>
         </div>
       </footer>
     </div>
