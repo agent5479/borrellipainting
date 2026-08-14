@@ -9,6 +9,13 @@ export function Seo() {
     document.title = page.title
     const desc = document.querySelector('meta[name="description"]')
     if (desc) desc.setAttribute('content', page.description)
+    let robots = document.querySelector('meta[name="robots"]')
+    if (!robots) {
+      robots = document.createElement('meta')
+      robots.setAttribute('name', 'robots')
+      document.head.appendChild(robots)
+    }
+    robots.setAttribute('content', page.robots ?? 'index,follow')
   }, [pathname])
   return null
 }

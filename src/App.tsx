@@ -4,10 +4,12 @@ import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import ExteriorSurfaces from './pages/quote/ExteriorSurfaces'
 import IndoorRooms from './pages/quote/IndoorRooms'
+import QuotesTool from './pages/quotes/QuotesTool'
 
 export function App() {
   return (
     <Routes>
+      <Route path="/quotes" element={<QuotesTool />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/quote/indoor" element={<IndoorRooms />} />

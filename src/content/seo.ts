@@ -5,6 +5,7 @@ export interface PageSeo {
   title: string
   description: string
   ogType?: 'website' | 'article'
+  robots?: string
 }
 
 export const PAGES: Record<string, PageSeo> = {
@@ -25,6 +26,12 @@ export const PAGES: Record<string, PageSeo> = {
     title: 'Weatherboards, corrugate & roof calculator | Borrelli Painting',
     description:
       'Exterior calculator for weatherboards, corrugated cladding and roof iron. Corrugation, pitch and extra labour built in. Impression only.',
+  },
+  '/quotes': {
+    path: '/quotes',
+    title: 'Quotes | Borrelli Painting',
+    description: 'Internal quote builder for Borrelli Painting.',
+    robots: 'noindex,nofollow',
   },
 }
 
@@ -69,7 +76,7 @@ export function renderHead(path: string): string {
   const tags = [
     `<title>${escapeHtml(page.title)}</title>`,
     `<meta name="description" content="${escapeHtml(page.description)}" />`,
-    `<meta name="robots" content="index,follow" />`,
+    `<meta name="robots" content="${escapeHtml(page.robots ?? 'index,follow')}" />`,
     `<link rel="canonical" href="${url}" />`,
     `<meta property="og:type" content="${page.ogType ?? 'website'}" />`,
     `<meta property="og:site_name" content="${SITE_NAME}" />`,

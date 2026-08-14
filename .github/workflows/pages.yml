@@ -24,6 +24,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Set quotes password hash
+        env:
+          QUOTES_ADMIN_PASSWORD: ${{ secrets.QUOTES_ADMIN_PASSWORD }}
+        run: |
+          if [ -z "$QUOTES_ADMIN_PASSWORD" ]; then
+            echo "QUOTES_ADMIN_PASSWORD secret is required" >&2
+            exit 1
+          fi
+          echo "VITE_QUOTES_PASSWORD_HASH=$(printf '%s' "$QUOTES_ADMIN_PASSWORD" | sha256sum | cut -d' ' -f1)" >> "$GITHUB_ENV"
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
