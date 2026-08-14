@@ -1,4 +1,5 @@
 const SESSION_KEY = 'bp-quotes-unlocked'
+const HASH_RE = /^[a-f0-9]{64}$/
 
 export async function sha256Hex(value: string): Promise<string> {
   const data = new TextEncoder().encode(value)
@@ -8,12 +9,15 @@ export async function sha256Hex(value: string): Promise<string> {
     .join('')
 }
 
-export function expectedPasswordHash(): string {
-  return (import.meta.env.VITE_QUOTES_PASSWORD_HASH ?? '').trim().toLowerCase()
+export function expectedPasswordHashes(): string[] {
+  return (import.meta.env.VITE_QUOTES_PASSWORD_HASH ?? '')
+    .split(',')
+    .map((h) => h.trim().toLowerCase())
+    .filter((h) => HASH_RE.test(h))
 }
 
 export function isQuotesConfigured(): boolean {
-  return /^[a-f0-9]{64}$/.test(expectedPasswordHash())
+  return expectedPasswordHashes().length > 0
 }
 
 export function isQuotesUnlocked(): boolean {
@@ -30,10 +34,10 @@ export function lockQuotesSession(): void {
 }
 
 export async function tryUnlockQuotes(password: string): Promise<'ok' | 'bad' | 'unconfigured'> {
-  const expected = expectedPasswordHash()
-  if (!/^[a-f0-9]{64}$/.test(expected)) return 'unconfigured'
+  const expected = expectedPasswordHashes()
+  if (expected.length === 0) return 'unconfigured'
   const actual = await sha256Hex(password)
-  if (actual !== expected) return 'bad'
+  if (!expected.includes(actual)) return 'bad'
   unlockQuotesSession()
   return 'ok'
 }

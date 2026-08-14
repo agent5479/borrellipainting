@@ -39,8 +39,8 @@ export function QuotesLogin({ onUnlocked }: QuotesLoginProps) {
         <p className="qt-muted">Private staff tool — password required. Not linked from the public site.</p>
         {!configured ? (
           <p className="qt-flash qt-flash-error" role="alert">
-            Set <code>VITE_QUOTES_PASSWORD_HASH</code> locally, or the{' '}
-            <code>QUOTES_ADMIN_PASSWORD</code> GitHub secret for deploy.
+            Set <code>VITE_QUOTES_PASSWORD_HASH</code> locally, or GitHub secrets{' '}
+            <code>QUOTES_ADMIN_PASSWORD</code> / <code>gbtech_admin</code> for deploy.
           </p>
         ) : null}
         <form onSubmit={onSubmit}>

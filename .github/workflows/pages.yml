@@ -24,15 +24,31 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Set quotes password hash
+      - name: Set quotes password hashes
         env:
           QUOTES_ADMIN_PASSWORD: ${{ secrets.QUOTES_ADMIN_PASSWORD }}
+          GBTECH_ADMIN: ${{ secrets.gbtech_admin }}
         run: |
-          if [ -z "$QUOTES_ADMIN_PASSWORD" ]; then
-            echo "QUOTES_ADMIN_PASSWORD secret is required" >&2
+          hashes=""
+          hash_one() {
+            printf '%s' "$1" | sha256sum | cut -d' ' -f1
+          }
+          if [ -n "$QUOTES_ADMIN_PASSWORD" ]; then
+            hashes="$(hash_one "$QUOTES_ADMIN_PASSWORD")"
+          fi
+          if [ -n "$GBTECH_ADMIN" ]; then
+            next="$(hash_one "$GBTECH_ADMIN")"
+            if [ -n "$hashes" ]; then
+              hashes="$hashes,$next"
+            else
+              hashes="$next"
+            fi
+          fi
+          if [ -z "$hashes" ]; then
+            echo "Set QUOTES_ADMIN_PASSWORD and/or gbtech_admin as Actions secrets" >&2
             exit 1
           fi
-          echo "VITE_QUOTES_PASSWORD_HASH=$(printf '%s' "$QUOTES_ADMIN_PASSWORD" | sha256sum | cut -d' ' -f1)" >> "$GITHUB_ENV"
+          echo "VITE_QUOTES_PASSWORD_HASH=$hashes" >> "$GITHUB_ENV"
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
