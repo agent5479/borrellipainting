@@ -114,8 +114,7 @@ export async function exportBallparkPdf(estimate: PaintEstimate): Promise<void> 
 
   y = (doc.lastAutoTable?.finalY ?? y) + 8
   const fees: [string, string][] = [
-    ['Labour', `$${estimate.labour.toFixed(2)}`],
-    ['Materials', `$${estimate.materials.toFixed(2)}`],
+    ['Labour & materials', `$${(estimate.labour + estimate.materials).toFixed(2)}`],
     ['Setup', `$${estimate.setupFee.toFixed(2)}`],
     ['Travel (Golden Bay)', `$${estimate.travelFee.toFixed(2)}`],
   ]

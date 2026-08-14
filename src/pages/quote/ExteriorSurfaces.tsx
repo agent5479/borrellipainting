@@ -248,7 +248,7 @@ export default function ExteriorSurfaces() {
                   onClick={() => setPaintTypeId(p.id)}
                 >
                   <strong>{p.name}</strong>
-                  <span>${p.materialPerM2}/m²</span>
+                  <span>{p.finishCoats} coats</span>
                 </button>
               ))}
             </div>
@@ -269,7 +269,7 @@ export default function ExteriorSurfaces() {
                   onClick={() => setUndercoatId(u.id)}
                 >
                   <strong>{u.name}</strong>
-                  <span>{u.materialPerM2 > 0 ? `$${u.materialPerM2}/m²` : 'skip'}</span>
+                  <span>{u.id === 'none' ? 'skip' : 'included'}</span>
                 </button>
               ))}
             </div>
@@ -285,7 +285,7 @@ export default function ExteriorSurfaces() {
                   {undercoatId !== 'none' ? ` · ${undercoatById(undercoatId)?.name}` : ''}
                 </small>
                 <small className="paintboard-split">
-                  Labour ${estimate.labour.toFixed(0)} · Materials ${estimate.materials.toFixed(0)} · Setup +
+                  Labour &amp; materials ${(estimate.labour + estimate.materials).toFixed(0)} · Setup +
                   travel ${(estimate.setupFee + estimate.travelFee).toFixed(0)}
                   {estimate.roofAccessFee > 0 ? ` · roof access $${estimate.roofAccessFee.toFixed(0)}` : ''}
                 </small>
@@ -296,7 +296,7 @@ export default function ExteriorSurfaces() {
           </div>
           <p className="hint">
             Impression only — corrugate and roof figures include extra paint area and slower labour.
-            Not a confirmed quote.
+            Light prep sits inside the range. Not a confirmed quote.
           </p>
           {estimate && paintTypeId && (
             <p className="hint">

@@ -4,7 +4,16 @@ export type PaintSetting = 'indoor' | 'outdoor'
 
 export type PaintTypeId = 'standard' | 'premium' | 'exterior' | 'enamel' | 'roof'
 export type UndercoatId = 'none' | 'acrylic' | 'stainblock' | 'metal'
-export type SurfaceKindId = 'wall' | 'ceiling' | 'weatherboard' | 'corrugate' | 'roof' | 'fascia'
+export type SurfaceKindId =
+  | 'wall'
+  | 'ceiling'
+  | 'skirting'
+  | 'window'
+  | 'detailing'
+  | 'weatherboard'
+  | 'corrugate'
+  | 'roof'
+  | 'fascia'
 export type RoofPitchId = 'gentle' | 'typical' | 'steep'
 
 export interface PaintSurface {
@@ -114,8 +123,50 @@ export const SURFACE_KINDS: SurfaceKind[] = [
     dimB: 'Width (m)',
     maxA: 20,
     maxB: 20,
-    defaultA: 4.2,
-    defaultB: 3.6,
+    defaultA: 3.5,
+    defaultB: 2.75,
+  },
+  {
+    id: 'skirting',
+    name: 'Skirting',
+    blurb: 'Skirting boards — measure run length × board height.',
+    setting: 'indoor',
+    areaFactor: 1,
+    labourFactor: 2.5,
+    dimA: 'Length (m)',
+    dimB: 'Height (m)',
+    maxA: 80,
+    maxB: 0.4,
+    defaultA: 12.5,
+    defaultB: 0.1,
+  },
+  {
+    id: 'window',
+    name: 'Windows',
+    blurb: 'Frames, sashes, and reveals — enter opening size; paint area is the frame band.',
+    setting: 'indoor',
+    areaFactor: 0.4,
+    labourFactor: 2.5,
+    dimA: 'Width (m)',
+    dimB: 'Height (m)',
+    maxA: 4,
+    maxB: 3,
+    defaultA: 1.2,
+    defaultB: 1,
+  },
+  {
+    id: 'detailing',
+    name: 'Detailing / trim',
+    blurb: 'Scotia, architraves, doors, and cut-in trim — length × face width.',
+    setting: 'indoor',
+    areaFactor: 1,
+    labourFactor: 2.3,
+    dimA: 'Length (m)',
+    dimB: 'Face (m)',
+    maxA: 80,
+    maxB: 0.5,
+    defaultA: 12.5,
+    defaultB: 0.06,
   },
   {
     id: 'weatherboard',
@@ -204,7 +255,7 @@ export const PAINT_TYPES: PaintType[] = [
     id: 'standard',
     name: 'Standard acrylic',
     blurb: 'Everyday interior walls and ceilings — solid coverage, washable.',
-    materialPerM2: 11,
+    materialPerM2: 4,
     finishCoats: 2,
     setting: 'indoor',
   },
@@ -212,7 +263,7 @@ export const PAINT_TYPES: PaintType[] = [
     id: 'premium',
     name: 'Premium low-VOC',
     blurb: 'Higher hide and scrub resistance — living areas and rentals.',
-    materialPerM2: 19,
+    materialPerM2: 7,
     finishCoats: 2,
     setting: 'indoor',
   },
@@ -220,7 +271,7 @@ export const PAINT_TYPES: PaintType[] = [
     id: 'exterior',
     name: 'Exterior weathercoat',
     blurb: 'UV and rain-ready for weatherboards, fascia, and outdoor joinery.',
-    materialPerM2: 16,
+    materialPerM2: 5,
     finishCoats: 2,
     setting: 'outdoor',
   },
@@ -228,7 +279,7 @@ export const PAINT_TYPES: PaintType[] = [
     id: 'roof',
     name: 'Roof coating',
     blurb: 'High-build roof paint for corrugate iron — UV, rain, and chalking.',
-    materialPerM2: 22,
+    materialPerM2: 7,
     finishCoats: 2,
     setting: 'outdoor',
   },
@@ -236,7 +287,7 @@ export const PAINT_TYPES: PaintType[] = [
     id: 'enamel',
     name: 'Hard-wearing enamel',
     blurb: 'Doors, trims, wet areas — tougher film, slower dry.',
-    materialPerM2: 24,
+    materialPerM2: 8,
     finishCoats: 2,
     setting: 'both',
   },
@@ -254,27 +305,28 @@ export const UNDERCOATS: UndercoatOption[] = [
     id: 'acrylic',
     name: 'Acrylic sealer',
     blurb: 'New gib, patched plaster, or colour change — seals and evens.',
-    materialPerM2: 8,
+    materialPerM2: 2,
     setting: 'both',
   },
   {
     id: 'stainblock',
     name: 'Stain blocker',
     blurb: 'Water marks, nicotine, tannin bleed — locks stains before topcoat.',
-    materialPerM2: 14,
+    materialPerM2: 5,
     setting: 'both',
   },
   {
     id: 'metal',
     name: 'Metal primer',
     blurb: 'Bare or rusty corrugate and roof iron — keys the topcoat.',
-    materialPerM2: 12,
+    materialPerM2: 4,
     setting: 'outdoor',
   },
 ]
 
-const LABOUR_INDOOR = 18
-const LABOUR_OUTDOOR = 26
+/** Indoor wall labour $/m² — tuned so ~30 m² standard + sealer ≈ $900 all-in. */
+const LABOUR_INDOOR = 16
+const LABOUR_OUTDOOR = 23
 const SETUP_FEE = 85
 const TRAVEL_FEE = 35
 const OUTDOOR_SURCHARGE_RATE = 0.12
@@ -335,11 +387,13 @@ export function areaNote(surface: PaintSurface): string | undefined {
   if (!kind) return undefined
   const pitch = surface.kind === 'roof' ? roofPitchById(surface.pitchId ?? 'typical') : undefined
   const bits: string[] = []
-  if (kind.areaFactor > 1) {
+  if (kind.areaFactor !== 1) {
     bits.push(
-      surface.kind === 'corrugate' || surface.kind === 'roof'
-        ? `corrugation ×${kind.areaFactor}`
-        : `laps ×${kind.areaFactor}`,
+      surface.kind === 'window'
+        ? `frames & reveals ×${kind.areaFactor}`
+        : surface.kind === 'corrugate' || surface.kind === 'roof'
+          ? `corrugation ×${kind.areaFactor}`
+          : `laps ×${kind.areaFactor}`,
     )
   }
   if (pitch) bits.push(`${pitch.name.split(' ')[0].toLowerCase()} pitch ×${pitch.factor}`)

@@ -8,7 +8,7 @@ import {
 } from './paintingQuote'
 
 export function ballparkTitle(setting: PaintSetting): string {
-  return setting === 'indoor' ? 'Indoor walls & ceilings' : 'Exterior surfaces & roof'
+  return setting === 'indoor' ? 'Indoor rooms' : 'Exterior surfaces & roof'
 }
 
 export function formatBallparkText(estimate: PaintEstimate): string {
@@ -37,8 +37,7 @@ export function formatBallparkText(estimate: PaintEstimate): string {
     `Measured area: ${estimate.measuredM2} m²`,
     `Paintable area: ${estimate.paintableM2} m²`,
     '',
-    `Labour: $${estimate.labour.toFixed(2)}`,
-    `Materials: $${estimate.materials.toFixed(2)}`,
+    `Labour & materials: $${(estimate.labour + estimate.materials).toFixed(2)}`,
     `Setup: $${estimate.setupFee.toFixed(2)}`,
     `Travel (Golden Bay): $${estimate.travelFee.toFixed(2)}`,
   ]

@@ -72,8 +72,8 @@ export default function Home() {
             <Link to="/quote/indoor" className="quote-card quote-card-fresh">
               <DemoCardImage id="freshcoat" />
               <span className="quote-kind">Simple indoor</span>
-              <h3>Indoor walls &amp; ceilings</h3>
-              <p>Room walls and ceilings → paint &amp; undercoat → ballpark figure.</p>
+              <h3>Indoor rooms</h3>
+              <p>Walls, ceiling, skirting, windows &amp; trim → paint system → ballpark figure.</p>
               <span className="quote-go">Open calculator →</span>
             </Link>
             <Link to="/quote/exterior" className="quote-card quote-card-board">

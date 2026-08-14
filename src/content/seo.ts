@@ -17,9 +17,9 @@ export const PAGES: Record<string, PageSeo> = {
   },
   '/quote/indoor': {
     path: '/quote/indoor',
-    title: 'Indoor walls & ceilings calculator | Borrelli Painting',
+    title: 'Indoor rooms calculator | Borrelli Painting',
     description:
-      'Simple indoor room calculator — walls, ceilings, paint and undercoat for a Golden Bay ballpark figure. Impression only — not a confirmed quote.',
+      'Indoor room calculator — walls, ceilings, skirting, windows and trim for a Golden Bay ballpark figure. Impression only — not a confirmed quote.',
   },
   '/quote/exterior': {
     path: '/quote/exterior',

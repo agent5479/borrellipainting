@@ -23,12 +23,28 @@ import {
 const INDOOR_PAINTS = paintsFor('indoor')
 const INDOOR_UNDERCOATS = undercoatsFor('indoor')
 
+function labourHint(kind: SurfaceKindId): string | null {
+  if (kind === 'ceiling') return 'slower overhead labour'
+  if (kind === 'skirting' || kind === 'window' || kind === 'detailing') return 'fiddly cut-in labour'
+  return null
+}
+
 export default function IndoorRooms() {
   const [step, setStep] = useState(1)
   const [surfaces, setSurfaces] = useState<PaintSurface[]>([
-    { id: 'wall-lounge-long', label: 'Lounge — long wall', widthM: 4.2, heightM: 2.4, qty: 1, kind: 'wall' },
-    { id: 'wall-lounge-ends', label: 'Lounge — end walls', widthM: 3.2, heightM: 2.4, qty: 2, kind: 'wall' },
-    { id: 'ceil-lounge', label: 'Lounge — ceiling', widthM: 4.2, heightM: 3.2, qty: 1, kind: 'ceiling' },
+    { id: 'wall-lounge-long', label: 'Lounge — long walls', widthM: 3.5, heightM: 2.4, qty: 2, kind: 'wall' },
+    { id: 'wall-lounge-ends', label: 'Lounge — end walls', widthM: 2.75, heightM: 2.4, qty: 2, kind: 'wall' },
+    { id: 'ceil-lounge', label: 'Lounge — ceiling', widthM: 3.5, heightM: 2.75, qty: 1, kind: 'ceiling' },
+    { id: 'skirt-lounge', label: 'Lounge — skirting', widthM: 12.5, heightM: 0.1, qty: 1, kind: 'skirting' },
+    { id: 'win-lounge', label: 'Lounge — windows', widthM: 1.2, heightM: 1, qty: 3, kind: 'window' },
+    {
+      id: 'detail-lounge',
+      label: 'Lounge — scotia / trim',
+      widthM: 12.5,
+      heightM: 0.06,
+      qty: 1,
+      kind: 'detailing',
+    },
   ])
   const [paintTypeId, setPaintTypeId] = useState<PaintTypeId>('standard')
   const [undercoatId, setUndercoatId] = useState<UndercoatId>('acrylic')
@@ -63,12 +79,22 @@ export default function IndoorRooms() {
     setSurfaces((prev) => (prev.length <= 1 ? prev : prev.filter((s) => s.id !== id)))
   }
 
+  const addKind = (kind: SurfaceKindId, labelPrefix: string) => {
+    setSurfaces((prev) => [
+      ...prev,
+      newSurface({
+        kind,
+        label: `${labelPrefix} ${prev.filter((x) => x.kind === kind).length + 1}`,
+      }),
+    ])
+  }
+
   return (
     <main className="painting-page theme-freshcoat">
       <QuoteChrome
         theme="Indoor"
-        title="Indoor walls & ceilings"
-        subtitle="Simple room calculator — measure walls and ceilings, pick paint, and see a Golden Bay ballpark."
+        title="Indoor rooms"
+        subtitle="Walls, ceilings, skirting, windows, and trim — pick a paint system for a Golden Bay ballpark."
         imageId="freshcoat"
       />
 
@@ -82,14 +108,17 @@ export default function IndoorRooms() {
 
       {step === 1 && (
         <section className="yacht-panel demo-enter">
-          <h2>1. Rooms — walls &amp; ceilings</h2>
+          <h2>1. Room surfaces</h2>
           <p className="hint">
-            Width × height in metres. Mark ceilings separately — overhead work takes a bit longer.
+            Measure walls and ceiling in metres. Add skirting, windows, and trim for a full-room figure —
+            light plastering and patchwork sits inside the estimate range.
           </p>
           <div className="wall-editor-list">
             {surfaces.map((s) => {
               const kind = surfaceKindById(s.kind)
               const note = areaNote(s)
+              const hint = labourHint(s.kind)
+              const dimStep = s.kind === 'skirting' || s.kind === 'detailing' || s.kind === 'window' ? 0.01 : 0.1
               return (
                 <div key={s.id} className="wall-editor-card">
                   <label className="field">
@@ -118,9 +147,9 @@ export default function IndoorRooms() {
                       {kind?.dimA ?? 'Width (m)'}
                       <input
                         type="number"
-                        min={0.5}
+                        min={0}
                         max={kind?.maxA ?? 20}
-                        step={0.1}
+                        step={dimStep}
                         value={s.widthM}
                         onChange={(e) => updateSurface(s.id, { widthM: Number(e.target.value) })}
                       />
@@ -129,9 +158,9 @@ export default function IndoorRooms() {
                       {kind?.dimB ?? 'Height (m)'}
                       <input
                         type="number"
-                        min={0.3}
+                        min={0}
                         max={kind?.maxB ?? 6}
-                        step={0.1}
+                        step={dimStep}
                         value={s.heightM}
                         onChange={(e) => updateSurface(s.id, { heightM: Number(e.target.value) })}
                       />
@@ -141,7 +170,7 @@ export default function IndoorRooms() {
                       <input
                         type="number"
                         min={1}
-                        max={12}
+                        max={24}
                         value={s.qty}
                         onChange={(e) => updateSurface(s.id, { qty: Number(e.target.value) })}
                       />
@@ -151,7 +180,7 @@ export default function IndoorRooms() {
                     <span>
                       {measuredAreaM2(s)} m² measured
                       {note ? <small> · {note}</small> : null}
-                      {s.kind === 'ceiling' ? <small> · slower overhead labour</small> : null}
+                      {hint ? <small> · {hint}</small> : null}
                       <small className="area-paint"> · {paintableAreaM2(s)} m² to paint</small>
                     </span>
                     <button
@@ -168,32 +197,20 @@ export default function IndoorRooms() {
             })}
           </div>
           <div className="btn-row">
-            <button
-              type="button"
-              className="btn ghost"
-              onClick={() =>
-                setSurfaces((prev) => [
-                  ...prev,
-                  newSurface({ kind: 'wall', label: `Wall ${prev.filter((x) => x.kind === 'wall').length + 1}` }),
-                ])
-              }
-            >
-              + Add wall
+            <button type="button" className="btn ghost" onClick={() => addKind('wall', 'Wall')}>
+              + Wall
             </button>
-            <button
-              type="button"
-              className="btn ghost"
-              onClick={() =>
-                setSurfaces((prev) => [
-                  ...prev,
-                  newSurface({
-                    kind: 'ceiling',
-                    label: `Ceiling ${prev.filter((x) => x.kind === 'ceiling').length + 1}`,
-                  }),
-                ])
-              }
-            >
-              + Add ceiling
+            <button type="button" className="btn ghost" onClick={() => addKind('ceiling', 'Ceiling')}>
+              + Ceiling
+            </button>
+            <button type="button" className="btn ghost" onClick={() => addKind('skirting', 'Skirting')}>
+              + Skirting
+            </button>
+            <button type="button" className="btn ghost" onClick={() => addKind('window', 'Windows')}>
+              + Windows
+            </button>
+            <button type="button" className="btn ghost" onClick={() => addKind('detailing', 'Trim')}>
+              + Detailing
             </button>
           </div>
           {estimate && (
@@ -225,9 +242,7 @@ export default function IndoorRooms() {
                 onClick={() => setPaintTypeId(p.id)}
               >
                 <strong>{p.name}</strong>
-                <span className="pkg-price">
-                  from ${p.materialPerM2}/m² · {p.finishCoats} coats
-                </span>
+                <span className="pkg-price">{p.finishCoats} coats</span>
                 <p>{p.blurb}</p>
               </button>
             ))}
@@ -243,7 +258,6 @@ export default function IndoorRooms() {
                 title={u.blurb}
               >
                 {u.name}
-                {u.materialPerM2 > 0 ? ` · $${u.materialPerM2}/m²` : ''}
               </button>
             ))}
           </div>
@@ -266,7 +280,10 @@ export default function IndoorRooms() {
       {step === 3 && estimate && (
         <section className="yacht-panel demo-enter">
           <h2>3. Your ballpark figure</h2>
-          <p className="hint">Impression only — not a confirmed quote or booking.</p>
+          <p className="hint">
+            Impression only — not a confirmed quote or booking. Light filling and patch prep is allowed
+            for in the range.
+          </p>
           <div className="summary">
             <p>
               <strong>Area:</strong> {estimate.paintableM2} m² indoor
@@ -284,8 +301,9 @@ export default function IndoorRooms() {
                   {line.label}: {line.paintableM2} m²
                 </li>
               ))}
-              <li>Labour ${estimate.labour.toFixed(2)}</li>
-              <li>Materials ${estimate.materials.toFixed(2)}</li>
+              <li>
+                Labour &amp; materials ${(estimate.labour + estimate.materials).toFixed(2)}
+              </li>
               <li>Setup ${estimate.setupFee.toFixed(2)}</li>
               <li>Travel (Golden Bay) ${estimate.travelFee.toFixed(2)}</li>
             </ul>
