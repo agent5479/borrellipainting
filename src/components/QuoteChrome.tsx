@@ -17,8 +17,8 @@ export function QuoteChrome({
   return (
     <>
       <header className="demo-chrome">
-        <Link to="/quotes" className="demo-back">
-          ← Ballpark tools
+        <Link to="/estimates" className="demo-back">
+          ← Estimates
         </Link>
         <div>
           <p className="demo-badge">Ballpark only · impression, not a quote</p>

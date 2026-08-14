@@ -15,6 +15,7 @@ export function Layout() {
           </Link>
           <nav className="site-nav" aria-label="Primary">
             <HashLink to="/#quote">Get a quote</HashLink>
+            <Link to="/estimates">Estimates</Link>
             <HashLink to="/#work">Work</HashLink>
             <HashLink to="/#windows">Windows</HashLink>
             <HashLink to="/#about">About</HashLink>

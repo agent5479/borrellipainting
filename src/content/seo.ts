@@ -15,26 +15,23 @@ export const PAGES: Record<string, PageSeo> = {
     description:
       'Local house painter in Golden Bay — interiors, exteriors, weatherboards and character homes across Tākaka, Pōhara and Collingwood. Call Luca Borrelli for an on-site quote.',
   },
-  '/quotes': {
-    path: '/quotes',
-    title: 'Ballpark estimate tools | Borrelli Painting',
+  '/estimates': {
+    path: '/estimates',
+    title: 'Painting estimates | Borrelli Painting',
     description:
-      'Unlisted indoor and exterior ballpark calculators. Impression only — Luca prefers to quote in person.',
-    robots: 'noindex,nofollow',
+      'Indoor and exterior ballpark estimate calculators for Golden Bay painting. Impression only — Luca confirms the real quote on site.',
   },
-  '/quotes/indoor': {
-    path: '/quotes/indoor',
+  '/estimates/indoor': {
+    path: '/estimates/indoor',
     title: 'Indoor rooms calculator | Borrelli Painting',
     description:
       'Indoor room calculator — walls, ceilings, skirting, windows and trim for a Golden Bay ballpark figure. Impression only — not a confirmed quote.',
-    robots: 'noindex,nofollow',
   },
-  '/quotes/exterior': {
-    path: '/quotes/exterior',
+  '/estimates/exterior': {
+    path: '/estimates/exterior',
     title: 'Weatherboards, corrugate & roof calculator | Borrelli Painting',
     description:
       'Exterior calculator for weatherboards, corrugated cladding and roof iron. Corrugation, pitch and extra labour built in. Impression only.',
-    robots: 'noindex,nofollow',
   },
   '/office': {
     path: '/office',
