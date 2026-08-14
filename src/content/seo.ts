@@ -1,4 +1,4 @@
-import { FACEBOOK_URL, FOUNDER, SITE_NAME, SITE_URL, absoluteUrl } from './site'
+import { FACEBOOK_URL, FOUNDER, PHONE_TEL, SITE_NAME, SITE_URL, absoluteUrl } from './site'
 
 export interface PageSeo {
   path: string
@@ -11,9 +11,9 @@ export interface PageSeo {
 export const PAGES: Record<string, PageSeo> = {
   '/': {
     path: '/',
-    title: 'Borrelli Painting · Gianluca Borrelli | Golden Bay painter',
+    title: 'House Painter Golden Bay & Tākaka | Borrelli Painting',
     description:
-      'Borrelli Painting — Gianluca (Luca) Borrelli. Interior and exterior painting across Tākaka, Pōhara, Collingwood and Golden Bay. Ask Luca to visit for a proper on-site quote.',
+      'Local house painter in Golden Bay — interiors, exteriors, weatherboards and character homes across Tākaka, Pōhara and Collingwood. Call Luca Borrelli for an on-site quote.',
   },
   '/quotes': {
     path: '/quotes',
@@ -44,8 +44,15 @@ export const PAGES: Record<string, PageSeo> = {
   },
 }
 
+const NOT_FOUND: PageSeo = {
+  path: '/404',
+  title: 'Page not found | Borrelli Painting',
+  description: 'That page does not exist on the Borrelli Painting site.',
+  robots: 'noindex,follow',
+}
+
 export function seoFor(path: string): PageSeo {
-  return PAGES[path] ?? PAGES['/']
+  return PAGES[path] ?? { ...NOT_FOUND, path }
 }
 
 export function jsonLd(): string {
@@ -53,17 +60,45 @@ export function jsonLd(): string {
     '@context': 'https://schema.org',
     '@type': 'HousePainter',
     name: SITE_NAME,
+    alternateName: ['Luca Borrelli', FOUNDER, 'Borrelli Painting Golden Bay'],
+    description:
+      'Interior and exterior house painting across Golden Bay, Tākaka, Pōhara and Collingwood. On-site quotes with Gianluca (Luca) Borrelli.',
     url: `${SITE_URL}/`,
     image: [ogImageUrl(), iconUrl()],
     logo: iconUrl(),
-    founder: { '@type': 'Person', name: FOUNDER },
-    areaServed: {
-      '@type': 'AdministrativeArea',
-      name: 'Golden Bay',
-      containedInPlace: { '@type': 'AdministrativeArea', name: 'Tasman, New Zealand' },
+    founder: { '@type': 'Person', name: FOUNDER, alternateName: 'Luca Borrelli' },
+    telephone: PHONE_TEL,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Tākaka',
+      addressRegion: 'Tasman',
+      addressCountry: 'NZ',
     },
+    areaServed: [
+      {
+        '@type': 'AdministrativeArea',
+        name: 'Golden Bay',
+        containedInPlace: { '@type': 'AdministrativeArea', name: 'Tasman, New Zealand' },
+      },
+      { '@type': 'City', name: 'Tākaka' },
+      { '@type': 'City', name: 'Pōhara' },
+      { '@type': 'City', name: 'Collingwood' },
+    ],
+    serviceType: [
+      'Interior painting',
+      'Exterior painting',
+      'Weatherboard painting',
+      'Roof painting',
+      'Character home painting',
+      'Timber window restoration',
+    ],
+    knowsAbout: [
+      'house painter Golden Bay',
+      'painter Tākaka',
+      'exterior house painting',
+      'interior house painting',
+    ],
     sameAs: [FACEBOOK_URL],
-    telephone: '+64-22-086-1842',
   }
   return JSON.stringify(data)
 }
@@ -80,13 +115,18 @@ export function iconUrl(): string {
 
 export function renderHead(path: string): string {
   const page = seoFor(path)
-  const url = absoluteUrl(page.path)
+  const isPublic = path in PAGES && !(page.robots ?? '').includes('noindex')
+  const url = absoluteUrl(path in PAGES ? page.path : '/')
   const image = ogImageUrl()
+  const robots = page.robots ?? 'index,follow'
   const tags = [
     `<title>${escapeHtml(page.title)}</title>`,
     `<meta name="description" content="${escapeHtml(page.description)}" />`,
-    `<meta name="robots" content="${escapeHtml(page.robots ?? 'index,follow')}" />`,
-    `<link rel="canonical" href="${url}" />`,
+    `<meta name="robots" content="${escapeHtml(robots)}" />`,
+    isPublic ? `<link rel="canonical" href="${url}" />` : null,
+    `<meta name="author" content="${escapeHtml(FOUNDER)}" />`,
+    `<meta name="geo.region" content="NZ-TAS" />`,
+    `<meta name="geo.placename" content="Golden Bay, Tākaka" />`,
     `<meta property="og:type" content="${page.ogType ?? 'website'}" />`,
     `<meta property="og:site_name" content="${SITE_NAME}" />`,
     `<meta property="og:locale" content="en_NZ" />`,
@@ -94,12 +134,15 @@ export function renderHead(path: string): string {
     `<meta property="og:description" content="${escapeHtml(page.description)}" />`,
     `<meta property="og:url" content="${url}" />`,
     `<meta property="og:image" content="${image}" />`,
+    `<meta property="og:image:alt" content="Freshly painted weatherboard house by Borrelli Painting in Golden Bay" />`,
+    `<meta property="og:image:width" content="960" />`,
+    `<meta property="og:image:height" content="640" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${escapeHtml(page.title)}" />`,
     `<meta name="twitter:description" content="${escapeHtml(page.description)}" />`,
     `<meta name="twitter:image" content="${image}" />`,
-    `<script type="application/ld+json">${jsonLd()}</script>`,
-  ]
+    path === '/' ? `<script type="application/ld+json">${jsonLd()}</script>` : null,
+  ].filter(Boolean)
   return tags.join('\n    ')
 }
 

@@ -24,7 +24,14 @@ for (const route of routes) {
   console.log(`prerendered ${route.path} → ${route.file}`)
 }
 
-writeFileSync(join(root, 'dist/404.html'), readFileSync(join(root, 'dist/index.html'), 'utf8'))
+// SPA shell for unknown paths on GitHub Pages — noindex so soft 404s stay out of search.
+const notFound = render('/__not_found__')
+const notFoundPage = template
+  .replace(/<title>[^<]*<\/title>\s*/i, '')
+  .replace('<!--app-head-->', notFound.head)
+  .replace('<!--app-html-->', notFound.html)
+writeFileSync(join(root, 'dist/404.html'), notFoundPage)
+console.log('wrote dist/404.html (noindex)')
 
 const today = new Date().toISOString().slice(0, 10)
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

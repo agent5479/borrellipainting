@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+# Unlisted ballpark tools and internal quote builder
+Disallow: /quotes
+Disallow: /office
+Disallow: /quote
+
 Sitemap: https://borrellipainting.nz/sitemap.xml
