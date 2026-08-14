@@ -20,18 +20,21 @@ export const PAGES: Record<string, PageSeo> = {
     title: 'Painting estimates | Borrelli Painting',
     description:
       'Indoor and exterior ballpark estimate calculators for Golden Bay painting. Impression only — Luca confirms the real quote on site.',
+    robots: 'noindex,nofollow',
   },
   '/estimates/indoor': {
     path: '/estimates/indoor',
     title: 'Indoor rooms calculator | Borrelli Painting',
     description:
       'Indoor room calculator — walls, ceilings, skirting, windows and trim for a Golden Bay ballpark figure. Impression only — not a confirmed quote.',
+    robots: 'noindex,nofollow',
   },
   '/estimates/exterior': {
     path: '/estimates/exterior',
     title: 'Weatherboards, corrugate & roof calculator | Borrelli Painting',
     description:
       'Exterior calculator for weatherboards, corrugated cladding and roof iron. Corrugation, pitch and extra labour built in. Impression only.',
+    robots: 'noindex,nofollow',
   },
   '/office': {
     path: '/office',
