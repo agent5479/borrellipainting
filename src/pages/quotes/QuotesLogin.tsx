@@ -36,7 +36,7 @@ export function QuotesLogin({ onUnlocked }: QuotesLoginProps) {
       <div className="qt-login-card">
         <p className="qt-kicker">Borrelli Painting</p>
         <h1>Quote builder</h1>
-        <p className="qt-muted">Staff login — not linked from the public site.</p>
+        <p className="qt-muted">Private staff tool — password required. Not linked from the public site.</p>
         {!configured ? (
           <p className="qt-flash qt-flash-error" role="alert">
             Set <code>VITE_QUOTES_PASSWORD_HASH</code> locally, or the{' '}

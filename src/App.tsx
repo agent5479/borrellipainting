@@ -10,7 +10,8 @@ import QuotesTool from './pages/quotes/QuotesTool'
 export function App() {
   return (
     <Routes>
-      <Route path="/quotes/admin" element={<QuotesTool />} />
+      <Route path="/office" element={<QuotesTool />} />
+      <Route path="/quotes/admin" element={<Navigate to="/office" replace />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/quotes" element={<QuotesHub />} />

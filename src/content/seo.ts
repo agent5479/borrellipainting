@@ -36,8 +36,8 @@ export const PAGES: Record<string, PageSeo> = {
       'Exterior calculator for weatherboards, corrugated cladding and roof iron. Corrugation, pitch and extra labour built in. Impression only.',
     robots: 'noindex,nofollow',
   },
-  '/quotes/admin': {
-    path: '/quotes/admin',
+  '/office': {
+    path: '/office',
     title: 'Quote builder | Borrelli Painting',
     description: 'Internal quote builder for Borrelli Painting.',
     robots: 'noindex,nofollow',
